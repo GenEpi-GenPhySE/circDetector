@@ -1,0 +1,5 @@
+samples: "samples_sus_scrofa.tsv"
+annotations:
+  cow: /home/ccerutti/work/workflow/25_03_20/workflow_2503/data/annotation_exons_bos_taurus.bed
+  pig: /home/ccerutti/work/workflow/25_03_20/workflow_2503/data/annotation_exons_sus_scrofa.bed
+wdir: "results"
