@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#usage: python3 scripts/stats_mapping.py -i sample_test.tsv -o mapping_stats_samples.tsv
+#usage: python3 scripts/stats_mapping.py -i sample_test.tsv -o test_out.tsv
 
 # imports:
 import os
@@ -7,7 +7,16 @@ import argparse
 import pandas as pd
 import numpy as np
 import re
+import sys
 
+
+# Utility functions
+def create_folder(path):
+    if not os.path.exists(path):
+        os.mkdir(path)
+
+def eprint(*args, **kwargs):
+    print(*args,  file=sys.stderr, **kwargs)
 
 def read_file(file):
     """ Read the sample file containing path files and return a pandas dataframe"""
@@ -51,7 +60,9 @@ def read_log_file(sample):
                 d['read'] = read
                 d[stat[0]] = stat[1]
             f.close()
-            path_out = path+"/se/"+read+"/"+args.output_file
+            create_folder("reports/"+sample_name+"/")
+            create_folder("reports/"+sample_name+"/"+read+"/")
+            path_out = "reports/"+sample_name+"/"+read+"/"+args.output_file
             paths_out.append(path_out)
             write_sample_file(d, path_out)
     return paths_out
@@ -70,18 +81,20 @@ def write_final_stat_tab(paths_out, output_file):
 
 
 def main():
-  
+
     # Read the sample file:
     sample = read_file(args.input_file)
 
     # Check the mapdir of each sample exists or not:
     check_mapdirs(sample["mapdir"])
 
+    create_folder("reports")
+    
     # Read log files and get the path of a table containing statistics:
     paths_out = read_log_file(sample)
-
+    
     # Write the statistic table with all samples:
-    write_final_stat_tab(paths_out, args.output_file)
+    write_final_stat_tab(paths_out, "reports/"+args.output_file)
 
 
 def parse_arguments():
