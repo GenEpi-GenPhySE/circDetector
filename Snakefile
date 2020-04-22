@@ -3,7 +3,6 @@
 # imports:
 import pandas as pd
 
-
 configfile: "config.yaml"
 
 sample_units = pd.read_table(config["samples"]).set_index("sample_unit", drop=False)
@@ -38,10 +37,12 @@ wildcard_constraints:
 
 
 rule all:
-    input:
-        expand("{sample}/circ_rnas.bed", sample=samples),
-        expand("{sample}/annotation_circRNAs.out", sample=samples),
-	"mapping_stat.tsv"
+   input:
+       expand("{sample}/circ_rnas.bed", sample=samples),
+       expand("{sample}/annotation_circRNAs.out", sample=samples),
+       expand("{sample}/stats_annotation.tsv", sample=samples),
+       "stats_annotation_all.tsv"
+       
 
 # rule statistiques:
 #     input:
@@ -56,19 +57,40 @@ rule all:
 #     notebook:
 #         "notebooks/notebook.ipynb"
 
+rule mergestatannotation:
+    input:
+        expand("{sample}/stats_annotation.tsv", sample=samples)
+    output:
+        "stats_annotation_all.tsv"
+    shell:
+        "cat {input} >> {output}"
+
+
+rule statannotation:
+    input:
+        "{sample}/annotation_circRNAs.out",
+    output:
+        "{sample}/stats_annotation.tsv"
+    log:
+        stdout = "logs/{sample}_stat_annotation.o",
+        stderr = "logs/{sample}_stat_annotation.e"
+    shell:
+        "python3 ../scripts/stats_annotation.py -i {input} -o {output}"
+        " 1>{log.stdout} 2>{log.stderr}"
+
 
 rule annotation:
-     input:
-         circ_detected = "{sample}/circ_rnas.bed",
-         annot_exon = get_species
-     output:
-         "{sample}/annotation_circRNAs.out"
-     log:
-         stdout = "logs/{sample}_annotation.o",
-         stderr = "logs/{sample}_annotation.e"
-     shell:
-         "python3 ../scripts/circRNA_annotation.py -circ {input.circ_detected}"
-         " -annot {input.annot_exon} -fmt bed -o {output} 1>{log.stdout} 2>{log.stderr}"
+    input:
+        circ_detected = "{sample}/circ_rnas.bed",
+        annot_exon = get_species
+    output:
+        "{sample}/annotation_circRNAs.out"
+    log:
+        stdout = "logs/{sample}_annotation.o",
+        stderr = "logs/{sample}_annotation.e"
+    shell:
+        "python3 ../scripts/circRNA_annotation.py -circ {input.circ_detected}"
+        " -annot {input.annot_exon} -fmt bed -o {output} 1>{log.stdout} 2>{log.stderr}"
 
 
 rule detection:
@@ -89,15 +111,15 @@ rule mergechimeric:
     input:
         sample_chimeric_function_files
     output:
-	    "{sample}/{read}.Chimeric.out.junction"
+        "{sample}/{read}.Chimeric.out.junction"
     shell:
-	    "cat {input} > {output}"
+        "cat {input} > {output}"
 
 
 rule mergemappingstat:
     input:
-	    config["samples"]
+        config["samples"]
     output:
-	    "mapping_stat.tsv"
+        "mapping_stat.tsv"
     shell:
-	    "python3 ../scripts/stats_mapping.py -i {input} -o {output}"
+        "python3 ../scripts/stats_mapping.py -i {input} -o {output}"
