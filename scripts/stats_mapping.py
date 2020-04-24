@@ -30,8 +30,8 @@ def check_mapdirs(mapdirs):
             raise Exception("WARNING following mapdir is missing %s" % mapdir)
 
 def read_log_file(sample):
-    """ Read and clean the Log.final.out files containing the summary mapping statistics 
-        after mapping job is complete and return an array of the pandas dataframe 
+    """ Read and clean the Log.final.out files containing the summary mapping statistics
+        after mapping job is complete and return an array of the pandas dataframe
         containing statistics"""
     stats = []
     d = {}
@@ -51,26 +51,28 @@ def read_log_file(sample):
                 if len(stat) == 1:
                     stats.remove(stat)
             for stat in stats:
-                stat[0] = ' '.join(stat[0].split("\t")) 
+                stat[0] = ' '.join(stat[0].split("\t"))
                 stat[0] = ' '.join(stat[0].split())
                 stat[1] = ' '.join(stat[1].split())
-                stat[1] = stat[1].replace("%", "") 
+                stat[1] = stat[1].replace("%", "")
                 d['sample'] = sample_name
-                d['sample_unit'] = sample_unit_name 
+                d['sample_unit'] = sample_unit_name
                 d['read'] = read
                 d[stat[0]] = stat[1]
             f.close()
-            create_folder("reports/"+sample_name+"/")
-            create_folder("reports/"+sample_name+"/"+read+"/")
-            path_out = "reports/"+sample_name+"/"+read+"/"+args.output_file
+            create_folder("reports/"+sample_unit_name+"/")
+            create_folder("reports/"+sample_unit_name+"/"+read+"/")
+            path_out = "reports/"+sample_unit_name+"/"+read+"/"+args.output_file
             paths_out.append(path_out)
             write_sample_file(d, path_out)
     return paths_out
+
 
 def write_sample_file(dict, output_file):
     """Get value from a statistic dictionnary and return a pandas object"""
     df = pd.DataFrame([dict])
     df.to_csv(output_file, sep="\t", index=False)
+
 
 def write_final_stat_tab(paths_out, output_file):
     df_final = pd.DataFrame()
@@ -89,10 +91,10 @@ def main():
     check_mapdirs(sample["mapdir"])
 
     create_folder("reports")
-    
+
     # Read log files and get the path of a table containing statistics:
     paths_out = read_log_file(sample)
-    
+
     # Write the statistic table with all samples:
     write_final_stat_tab(paths_out, "reports/"+args.output_file)
 
