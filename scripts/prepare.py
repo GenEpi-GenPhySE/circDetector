@@ -45,13 +45,17 @@ def get_species_short(species):
 def write_sample_file(metadata, output_file):
     """Read the metadate file and return a pandas object"""
     sample_ids = []
+    species_names = []
     for index, row in metadata.iterrows():
         short_name = get_species_short(row['species'])
         sample = "-".join([short_name, row['tissue'],
                            row['animal_name']])
+        species = short_name
         sample_ids.append(sample)
+        species_names.append(species)
     metadata['sample'] = sample_ids
-    samples = metadata[['sample', 'sample_unit', 'mapdir']]
+    metadata['species'] = species_names
+    samples = metadata[['sample', 'sample_unit', 'species', 'mapdir']]
     samples.to_csv(output_file, sep="\t", index=False)
 
 
