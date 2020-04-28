@@ -258,7 +258,7 @@ def circrna_detection(circ_juntcions, cr_threshold, tolerance):
     """
     # First pass, detect exact circular RNAs (no tolerance)
     circ_rnas = get_exact_circrnas(circ_juntcions, cr_threshold)
-    eprint("nb of tol 0 circRNAS %d" % len(circ_rnas))#########
+    eprint("nb of tol %d circRNAS %d" % (tolerance, len(circ_rnas)))#########
     # if tolerance > 0 compute fuzzy circrnas from previous list
     if tolerance > 0:
         circ_rnas = get_fuzzy_circrnas(circ_rnas, cr_threshold, tolerance)
@@ -326,6 +326,9 @@ def main(r1_input_file, r2_input_file, cr_threshold, tolerance,
     # Circular RNAs detection:
     circ_rnas = circrna_detection(circ_junctions, cr_threshold, tolerance) #### 'circRNA' object has no attribute 'ccr_array'
     eprint("%d circRNAs detected" % len(circ_rnas))
+
+    #for cir in circ_rnas:
+    #    print(cir.var_info_str())
 
     # Write the table of circular RNAs retained:
     circ.write_annotation(circ_rnas, output_file, fmt=args.output_file_format,

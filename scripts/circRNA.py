@@ -216,8 +216,10 @@ class CircRNA(Annotation):
     def _init_from_ccr(self, ccr_array):
         # Number of distinct CIGARs:
         self.ccr_array = ccr_array  # Array of cicular chimeric reads
-        rep_ccr = self._consensus_start_end(ccr_array)
+        #rep_ccr = self._consensus_start_end(ccr_array)
+        rep_ccr = ccr_array[0]
         chrom = rep_ccr.chrom
+        start, end, start_var, end_var = self._compute_consensus_start_end(ccr_array)
         start = rep_ccr.start + 1 ###
         end = rep_ccr.end - 1 ###
         strand = rep_ccr.transcript_strand
@@ -229,6 +231,7 @@ class CircRNA(Annotation):
         self.source = source
         self.feature = feature
 
+
         self.CIGAR_s1 = rep_ccr.CIGAR_s1  # CIGAR of the first segment
         self.CIGAR_s2 = rep_ccr.CIGAR_s2  # CIGAR of the second segment
         self.read_type = rep_ccr.read_type  # Read type (R1 or R2)
@@ -239,6 +242,9 @@ class CircRNA(Annotation):
         self.attributes_d['left'] = self._compute_left()
         self.attributes_d['right'] = self._compute_right()
         self.attributes_d['complete'] = self._compute_complete()
+
+        self.start_var = start_var
+        self.end_var = end_var
 
     @property
     def nb_ccr(self):
@@ -300,7 +306,11 @@ class CircRNA(Annotation):
         """
         return str(self.chrom)+":"+str(self.start)+":"+str(self.end)+self.strand
 
-    def _consensus_start_end(self, ccr_array):
+
+    def _compute_consensus_start_end(self, ccr_array):
+        """
+           Some documentation would be welcome
+        """
         d_start = defaultdict(list)
         d_end = defaultdict(list)
         for ccr in ccr_array:
@@ -312,12 +322,24 @@ class CircRNA(Annotation):
             dd_start[key_start] = compute_distinct_cr(value_start)
         for key_end, value_end in d_end.items():
             dd_end[key_end] = compute_distinct_cr(value_end)
-        max_start = max(dd_start.items(), key=operator.itemgetter(1))[0]
-        max_end = max(dd_end.items(), key=operator.itemgetter(1))[0]
-        for cr in ccr_array:
-            cr.start = max_start
-            cr.end = max_end
-            return cr
+        cons_start = max(dd_start.items(), key=operator.itemgetter(1))[0]
+        cons_end = max(dd_end.items(), key=operator.itemgetter(1))[0]
+        # Now variability arround consensus start and end
+        start_var = compute_variability(dd_start, cons_start)
+        end_var = compute_variability(dd_end, cons_end)
+        # for cr in ccr_array: I don't understand the reason for this loop
+        #     cr.start = max_start
+        #     cr.end = max_end
+        #     return cr
+        return cons_start, cons_end, start_var, end_var
+
+    def var_info_str(self):
+        starts = ",".join(map(str,[cr.start for cr in self.ccr_array]))
+        ends =  ",".join(map(str,[cr.end for cr in self.ccr_array]))
+        return "\t".join(map(str, [self.chrom, self.start, self.end, self.nb_ccr,
+                                   self.start_var,
+                                   self.end_var]))
+
 
     def add_start_annotation(self, annot):
         self.start_annotation.extend(annot)
@@ -381,7 +403,7 @@ class CircRNA(Annotation):
             annotations.append("%s-%s" % (upstream, downstream))
         return ",".join(annotations)
 
-  
+
     def get_intron_annot_gene_str(self, att):
         annotations = []
         for intron, p_overlap in self.intron_annotation:
@@ -391,7 +413,7 @@ class CircRNA(Annotation):
             downstream = intron.get_att("down_exon").get_att(att)
             strand_d = intron.get_att("down_exon").strand
             biotype_d = intron.get_att("down_exon").biotype
-            annotations.append("%s_%s_%s-%s_%s_%s" % (upstream, strand_up, biotype_up, 
+            annotations.append("%s_%s_%s-%s_%s_%s" % (upstream, strand_up, biotype_up,
                                                       downstream, strand_d, biotype_d))
         return ",".join(annotations)
 
@@ -407,7 +429,7 @@ class CircRNA(Annotation):
             annotations.append("%s" % (id_ife))
         return ",".join(annotations)
 
-    
+
     def get_infra_exonic_gene_annot_str(self, att):
         annotations = []
         for exon in self.infra_exonic_annotation:
@@ -417,7 +439,7 @@ class CircRNA(Annotation):
             annotations.append("%s_%s_%s" % (id_ife, strand, biotype))
         return ",".join(annotations)
 
-    
+
     def get_infra_exonic_exons_start_end(self):
         annotations = []
         for exon in self.infra_exonic_annotation:
@@ -446,6 +468,14 @@ def compute_distinct_cr(ccr_array):
         key = "-".join(map(str, [cr.read_type, cr.CIGAR_s1]))
         cigar_dict[key].append(cr)
     return len(cigar_dict.keys())
+
+def compute_variability(d_values, center):
+    deviations = []
+    occurences = 0
+    for pos, occ in d_values.items():
+        deviations.append(occ * abs(pos - center))
+        occurences += occ
+    return sum(deviations)/occurences
 
 
 def static_vars(**kwargs):
