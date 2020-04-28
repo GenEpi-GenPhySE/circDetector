@@ -1,5 +1,2 @@
-sample	sample_unit	mapdir
-cow-testis-neonat1	SRR7175531	/home/pclf/Bureau/Semaine_15/15_04_20/logs/bos_taurus/testis/star/mapping/SRR7175531
-pig-liver-old2	SRR8310839	/home/pclf/Bureau/Semaine_15/15_04_20/logs/sus_scrofa/liver/star/mapping/SRR8310839
-pig-testis-31	31	/home/pclf/Bureau/Semaine_15/15_04_20/logs/sus_scrofa/testis/star/mapping/31
-cow-liver-B004	B004_S04_L001	/home/pclf/Bureau/Semaine_15/15_04_20/logs/bos_taurus/liver/star/mapping/B004_S04_L001
+sample	sample_unit	species	mapdir
+test	test_run1	pig	../testdata/mapdir

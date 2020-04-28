@@ -1,5 +1,4 @@
-samples: "/home/pclf/Bureau/Semaine_16/22_04_20/samples.tsv"
-annotations:
-  cow: /home/ccerutti/work/workflow/25_03_20/workflow_2503/data/annotation_exons_bos_taurus.bed
-  pig: /home/ccerutti/work/workflow/25_03_20/workflow_2503/data/annotation_exons_sus_scrofa.bed
-wdir: "results"
+samples: samples.tsv
+annotation:
+  pig: ../testdata/annotation.bed
+wdir: results

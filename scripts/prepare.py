@@ -21,7 +21,7 @@ def check_mapdirs(mapdirs):
 
 
 def unique(liste):
-    return sorted(set(liste)) 
+    return sorted(set(liste))
 
 
 def get_path_files(df):
