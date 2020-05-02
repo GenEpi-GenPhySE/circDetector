@@ -55,7 +55,7 @@ def write_sample_file(metadata, output_file):
         species_names.append(species)
     metadata['sample'] = sample_ids
     metadata['species'] = species_names
-    samples = metadata[['sample', 'sample_unit', 'species', 'mapdir']]
+    samples = metadata[['sample', 'sample_unit', 'species', 'sex','mapdir']]
     samples.to_csv(output_file, sep="\t", index=False)
 
 
