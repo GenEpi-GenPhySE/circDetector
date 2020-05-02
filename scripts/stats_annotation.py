@@ -133,8 +133,7 @@ def get_stats(file, df):
                         nb_true_intronic += 1
                           
     # Write the true exonic table:
-    # write_true_exonic_table("true_exonic_circ.tsv", true_exonic)
-    to_csv(true_exonic, header, "true_exonic_circ.tsv")
+    write_true_exonic_table(true_exonic, header, "true_exonic_circ.tsv")
 
     nb_circ_annotated = nb_start_end_exonic + nb_true_intronic
     nb_circ_non_annotated = nb_circ_tot - (nb_circ_annotated + nb_antisens_exonic + nb_infraexonic_antisens)
@@ -147,7 +146,7 @@ def write_stat_table(stats, output_file):
     with open(output_file, "w") as fout:
         fout.write(stats)
 
-def to_csv(self, header, path, index=None, sep="\t", na_rep='', float_format=None,
+def write_true_exonic_table(self, header, path, index=None, sep="\t", na_rep='', float_format=None,
            index_label=None, mode='w', encoding=None, date_format=None, decimal='.'):
     """
     Write a circRNAs list to a tabular-separated file (tsv).
