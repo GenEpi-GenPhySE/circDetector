@@ -251,6 +251,10 @@ class CircRNA(Annotation):
         return self.get_att("nb_ccr")
 
     @property
+    def nccr(self):
+        return int(self.get_att("nb_ccr"))
+
+    @property
     def complete(self):
         return self.get_att("complete")
 
@@ -340,6 +344,9 @@ class CircRNA(Annotation):
                                    self.start_var,
                                    self.end_var]))
 
+    def str4diffexp(self):
+        key = "%s:%d-%d" % (self.chrom, self.start, self.end)
+        return "%s\t%d" %(key, self.nccr)
 
     def add_start_annotation(self, annot):
         self.start_annotation.extend(annot)
