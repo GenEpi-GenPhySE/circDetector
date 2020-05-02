@@ -31,11 +31,13 @@ def get_stats(file, df):
         format about circRNAs"""
     nb_tot_exonic = len(df)
     sample = get_sample(file)
+    header = list(df.columns.values.tolist())
     
     # Arrays:
     exonic_circ_names = []
     infraexonic_tot_names = []
     monoexonic_circ_names = []
+    true_exonic = []
     
     # Counters circRNAs type:
     nb_tot_exonic = 0
@@ -72,6 +74,7 @@ def get_stats(file, df):
                                 nb_single_annotated_junction += 1
                             if ("3" and "+") in row.exons_id_end:
                                 nb_start_end_exonic += 1
+                                true_exonic.append(row)
                                 if ((len(exon_id_start)==1 and len(exon_id_end)==1) and (exon_start == exon_end)):
                                     nb_monoexonic += 1
                                     monoexonic_circ_names.append(row.circ_rna_name)
@@ -87,6 +90,7 @@ def get_stats(file, df):
                                 nb_single_annotated_junction += 1
                             if ("3" and "-") in row.exons_id_start:
                                 nb_start_end_exonic += 1
+                                true_exonic.append(row)
                                 if ((len(exon_id_start)==1 and len(exon_id_end)==1) and (exon_start == exon_end)):
                                     nb_monoexonic += 1
                                     monoexonic_circ_names.append(row.circ_rna_name)
@@ -128,6 +132,10 @@ def get_stats(file, df):
                     elif (row.end == row.end_i and (row.start - row.start_i) > 32): 
                         nb_true_intronic += 1
                           
+    # Write the true exonic table:
+    # write_true_exonic_table("true_exonic_circ.tsv", true_exonic)
+    to_csv(true_exonic, header, "true_exonic_circ.tsv")
+
     nb_circ_annotated = nb_start_end_exonic + nb_true_intronic
     nb_circ_non_annotated = nb_circ_tot - (nb_circ_annotated + nb_antisens_exonic + nb_infraexonic_antisens)
 
@@ -138,6 +146,20 @@ def get_stats(file, df):
 def write_stat_table(stats, output_file):
     with open(output_file, "w") as fout:
         fout.write(stats)
+
+def to_csv(self, header, path, index=None, sep="\t", na_rep='', float_format=None,
+           index_label=None, mode='w', encoding=None, date_format=None, decimal='.'):
+    """
+    Write a circRNAs list to a tabular-separated file (tsv).
+    """
+    from pandas.core.frame import DataFrame
+    df = DataFrame(self)
+    # result is only a string if no path provided, otherwise None
+    result = df.to_csv(path, index=index, sep=sep, na_rep=na_rep, float_format=float_format, 
+                       header=header, index_label=index_label, mode=mode, encoding=encoding, 
+                       date_format=date_format, decimal=decimal)
+    if path is None:
+        return result
 
 def main():
 
