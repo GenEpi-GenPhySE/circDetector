@@ -11,6 +11,7 @@ import re
 import sys
 import csv
 
+
 # Utility functions
 def eprint(*args, **kwargs):
     print(*args,  file=sys.stderr, **kwargs)
@@ -140,24 +141,31 @@ def get_stats(file, df):
                         true_intronic.append(row)
 
     # Write exonic table for comparaison between tissues/species:
-    write_comparison_table(true_exonic)                   
+    stats_exonic = write_comparison_table(sample, true_exonic, "exonic", args.output_comp_exonic_file)
+    nb_c = stats_exonic[0]
+    nb_nc = stats_exonic[1] 
+
+    # Intronic table to get the proportion of each biotype: 
+    write_comparison_table(sample, true_intronic, "intronic", args.output_comp_intronic_file)     
 
     # Write the true exonic table:
-    write_circ_table(true_exonic, header, "true_exonic_circ.tsv")
+    write_circ_table(true_exonic, header, args.output_exonic_file)
 
     # Write the true intronic table:
-    write_circ_table(true_intronic, header, "true_intronic_circ.tsv")
+    write_circ_table(true_intronic, header, args.output_intronic_file)
 
     nb_circ_annotated = nb_start_end_exonic + nb_true_intronic
     nb_circ_non_annotated = nb_circ_tot - (nb_circ_annotated + nb_antisens_exonic + nb_infraexonic_antisens)
 
     return "\t".join(map(str,[sample, nb_circ_tot, nb_tot_exonic, nb_start_end_exonic, nb_single_annotated_junction, nb_antisens_exonic,
                               nb_monoexonic, nb_infraexonic_tot, nb_infraexonic_sens, nb_infraexonic_antisens,
-                              nb_true_intronic, nb_circ_annotated, nb_circ_non_annotated]))+"\n"
+                              nb_true_intronic, nb_circ_annotated, nb_circ_non_annotated, nb_c, nb_nc]))+"\n"
+
 
 def write_stat_table(stats, output_file):
     with open(output_file, "w") as fout:
         fout.write(stats)
+
 
 def write_circ_table(self, header, path, index=None, sep="\t", na_rep='', float_format=None,
                      index_label=None, mode='w', encoding=None, date_format=None, decimal='.'):
@@ -173,16 +181,18 @@ def write_circ_table(self, header, path, index=None, sep="\t", na_rep='', float_
     if path is None:
         return result
 
-def write_comparison_table(true_exonic):
+
+def write_comparison_table(sample, circ_rnas, type, output_file_name):
     # Write exonic table for comparaison between tissues/species:
     header_comp = ["chrom:start-end:strand", "nb_ccr", "gene_id", "biotype"]
-    df_true_exonic = pd.DataFrame(true_exonic, index=None)
-    
-    with open('true_exonic_comparison_table.tsv', 'w') as fout:
+    df_circ_rnas = pd.DataFrame(circ_rnas, index=None)
+    biotypes = []
+
+    with open(output_file_name, 'w') as fout:
         tsv_writer = csv.writer(fout, delimiter='\t')
         tsv_writer.writerow(header_comp)
 
-        for index, row in df_true_exonic.iterrows():   
+        for index, row in df_circ_rnas.iterrows():   
             exons_id_start_a = []
             exons_id_end_a = []
 
@@ -207,9 +217,28 @@ def write_comparison_table(true_exonic):
                 biotypes_start = list(set(list(i[2] for i in exons_id_start)))
                 biotypes_end = list(set(list(i[2] for i in exons_id_end)))
                 intersect_biotypes = "".join(list(set(biotypes_start).intersection(biotypes_end)))
+                # Write line into the output file:
                 s = [chrom_start_end_strand, nb_ccr, intersect_gene_id, intersect_biotypes]
                 tsv_writer.writerow(s)
+                biotypes.append(intersect_biotypes)
 
+    # Dictionary with key = biotype and value = counter:
+    d = {}
+    d["sample"] = sample
+    for biotype in biotypes:
+        d[biotype] = d.get(biotype, 0) + 1    
+    values = []
+    for key, value in d.items():
+        if key != 'c' and key != 'sample':
+            values.append(value)
+    d["nc"] = sum(values)    
+
+    # df_biotypes = pd.DataFrame(d, index=[0], columns=["sample", "c", "nc"])
+
+    if type=="exonic":
+        return d["c"], d["nc"]
+    #     df_biotypes = df_biotypes.to_csv(args.output_biotype_file, sep = '\t', index=False)
+    
 
 def main():
 
@@ -220,18 +249,30 @@ def main():
     stats = get_stats(args.input_file, df_circ_annot)
 
     # Write the stats table:
-    write_stat_table(stats, args.output_file)
+    write_stat_table(stats, args.output_stats_file)
 
 
 def parse_arguments():
-    parser = argparse.ArgumentParser(description='Sample file')
-    parser.add_argument('-i', '--input_file',
-                        required=True, help='Sample file')
-    parser.add_argument('-o', '--output_file',
-                        required=True, help='Sample file')
+    parser = argparse.ArgumentParser(description='Return annotation statistics tables')
+    parser.add_argument('-i', '--input_file', required=True, 
+                        help='Annotation circRNAs file')
+    parser.add_argument('-o_stats', '--output_stats_file', required=False, 
+                        default="stats_annotation.tsv", 
+                        help='Table containing statistics of annotation')
+    parser.add_argument('-oi', '--output_intronic_file', required=False, 
+                        default="true_intronic_circRNAs.tsv",
+                        help='Table containing true intronic circRNAs')
+    parser.add_argument('-oe', '--output_exonic_file', required=False, 
+                        default="true_exonic_circRNAs.tsv",
+                        help='Table containing true exonic circRNAs')
+    parser.add_argument('-oce', '--output_comp_exonic_file', required=False, 
+                        default="true_exonic_comparison.tsv",
+                        help='Table containing true exonics circRNAs for comparisons')
+    parser.add_argument('-oci', '--output_comp_intronic_file', required=False, 
+                        default="true_intronic_comparison.tsv",
+                        help='Table containing true exonics circRNAs for comparisons')                     
     args = parser.parse_args()
     return args
-
 
 if __name__ == '__main__':
     args = parse_arguments()
