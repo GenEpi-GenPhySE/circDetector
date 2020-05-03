@@ -2,12 +2,14 @@
 #usage: python3 scripts/stats_annotation.py -i results_pig_testis_31/annotation_circRNAs_f_0_95.out -o stats_annotation.tsv
 
 # Imports:
+import circRNA as circ
 import os
 import argparse
 import pandas as pd
 import numpy as np
 import re
 import sys
+import csv
 
 # Utility functions
 def eprint(*args, **kwargs):
@@ -38,6 +40,7 @@ def get_stats(file, df):
     infraexonic_tot_names = []
     monoexonic_circ_names = []
     true_exonic = []
+    true_intronic = []
     
     # Counters circRNAs type:
     nb_tot_exonic = 0
@@ -123,17 +126,27 @@ def get_stats(file, df):
                     if (row.end_i - row.end) in range(-5,32):
                         if (row.start - row.start_i) in range(-5,5) or (row.start==row.start_i):
                             nb_true_intronic += 1
+                            true_intronic.append(row)
                     elif (row.start == row.start_i and (row.end_i - row.end) > 32): 
                         nb_true_intronic += 1
+                        true_intronic.append(row)
                 elif row.strand == "-":        
                     if (row.start - row.start_i) in range(-5,32):             
                         if ((row.end - row.end_i) in range(-5,5) or (row.end == row.end_i)): 
                             nb_true_intronic += 1
+                            true_intronic.append(row)
                     elif (row.end == row.end_i and (row.start - row.start_i) > 32): 
                         nb_true_intronic += 1
-                          
+                        true_intronic.append(row)
+
+    # Write exonic table for comparaison between tissues/species:
+    write_comparison_table(true_exonic)                   
+
     # Write the true exonic table:
-    write_true_exonic_table(true_exonic, header, "true_exonic_circ.tsv")
+    write_circ_table(true_exonic, header, "true_exonic_circ.tsv")
+
+    # Write the true intronic table:
+    write_circ_table(true_intronic, header, "true_intronic_circ.tsv")
 
     nb_circ_annotated = nb_start_end_exonic + nb_true_intronic
     nb_circ_non_annotated = nb_circ_tot - (nb_circ_annotated + nb_antisens_exonic + nb_infraexonic_antisens)
@@ -146,8 +159,8 @@ def write_stat_table(stats, output_file):
     with open(output_file, "w") as fout:
         fout.write(stats)
 
-def write_true_exonic_table(self, header, path, index=None, sep="\t", na_rep='', float_format=None,
-           index_label=None, mode='w', encoding=None, date_format=None, decimal='.'):
+def write_circ_table(self, header, path, index=None, sep="\t", na_rep='', float_format=None,
+                     index_label=None, mode='w', encoding=None, date_format=None, decimal='.'):
     """
     Write a circRNAs list to a tabular-separated file (tsv).
     """
@@ -160,6 +173,44 @@ def write_true_exonic_table(self, header, path, index=None, sep="\t", na_rep='',
     if path is None:
         return result
 
+def write_comparison_table(true_exonic):
+    # Write exonic table for comparaison between tissues/species:
+    header_comp = ["chrom:start-end:strand", "nb_ccr", "gene_id", "biotype"]
+    df_true_exonic = pd.DataFrame(true_exonic, index=None)
+    
+    with open('true_exonic_comparison_table.tsv', 'w') as fout:
+        tsv_writer = csv.writer(fout, delimiter='\t')
+        tsv_writer.writerow(header_comp)
+
+        for index, row in df_true_exonic.iterrows():   
+            exons_id_start_a = []
+            exons_id_end_a = []
+
+            # Select well-annotated true exonic circRNAs bases on the gene_id:
+            # Get gene_id:
+            genes_id_start = list(set(list(row.gene_id_start.split(","))))
+            genes_id_end = list(set(list(row.gene_id_end.split(","))))
+            intersect_gene_id = ", ".join(list(set(genes_id_start).intersection(genes_id_end)))
+
+            if len(intersect_gene_id) > 0:         
+                # Get key:
+                chrom_start = ":".join(map(str,[row.chrom, row.start]))
+                chrom_start_end = "-".join(map(str, [chrom_start , row.end]))
+                chrom_start_end_strand = ":".join(map(str, [chrom_start_end , row.strand]))
+                # Get the ccr number:
+                nb_ccr = row.nb_ccr
+                # Get biotype:
+                exons_id_start = list(set(list(row.exons_id_start.split(","))))
+                exons_id_end = list(set(list(row.exons_id_end.split(","))))
+                exons_id_start = list(i.split("_") for i in exons_id_start)
+                exons_id_end = list(i.split("_") for i in exons_id_end)
+                biotypes_start = list(set(list(i[2] for i in exons_id_start)))
+                biotypes_end = list(set(list(i[2] for i in exons_id_end)))
+                intersect_biotypes = "".join(list(set(biotypes_start).intersection(biotypes_end)))
+                s = [chrom_start_end_strand, nb_ccr, intersect_gene_id, intersect_biotypes]
+                tsv_writer.writerow(s)
+
+
 def main():
 
     # Read the circRNAs annotation file:
@@ -167,7 +218,6 @@ def main():
 
     # Compute statistics:
     stats = get_stats(args.input_file, df_circ_annot)
-    print(stats)
 
     # Write the stats table:
     write_stat_table(stats, args.output_file)
