@@ -154,12 +154,12 @@ def get_stats(file, df):
     # Write the true intronic table:
     write_circ_table(true_intronic, header, args.output_intronic_file)
 
-    nb_circ_annotated = nb_start_end_exonic + nb_true_intronic
-    nb_circ_non_annotated = nb_circ_tot - (nb_circ_annotated + nb_antisens_exonic + nb_infraexonic_antisens)
+    nb_circ_non_annotated = nb_circ_tot - (nb_start_end_exonic + nb_single_annotated_junction 
+                                           + nb_infraexonic_antisens + nb_true_intronic)
 
     return "\t".join(map(str,[sample, nb_circ_tot, nb_tot_exonic, nb_start_end_exonic, nb_single_annotated_junction, nb_antisens_exonic,
                               nb_monoexonic, nb_infraexonic_tot, nb_infraexonic_sens, nb_infraexonic_antisens,
-                              nb_true_intronic, nb_circ_annotated, nb_circ_non_annotated, nb_c, nb_nc]))+"\n"
+                              nb_true_intronic, nb_circ_non_annotated, nb_c, nb_nc]))+"\n"
 
 
 def write_stat_table(stats, output_file):
