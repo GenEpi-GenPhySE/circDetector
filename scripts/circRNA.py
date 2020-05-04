@@ -345,7 +345,7 @@ class CircRNA(Annotation):
                                    self.end_var]))
 
     def str4diffexp(self):
-        key = "%s:%d-%d" % (self.chrom, self.start, self.end)
+        key = "%s:%d-%d:%s" % (self.chrom, self.start, self.end, self.strand)
         return "%s\t%d" %(key, self.nccr)
 
     def add_start_annotation(self, annot):
