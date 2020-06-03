@@ -2,16 +2,18 @@
 
 # imports:
 import pandas as pd
+from snakemake.utils import report
 
 configfile: "config.yaml"
 
 sample_units = pd.read_table(config["samples"]).set_index("sample_unit", drop=False)
 samples = set(sample_units["sample"])
 tols=[0,2,5,10]
-min_cr=1
+min_cr=5
 
 workdir: config["wdir"]
 
+# report: config["report"]
 
 def sample_chimeric_function_files(wildcards):
     mapdirs = sample_units[sample_units["sample"] == wildcards.sample]['mapdir']
@@ -37,25 +39,61 @@ wildcard_constraints:
 
 
 rule all:
-   input:
-       expand("{sample}/circ_rnas.bed", sample=samples),
-       expand("{sample}/annotation_circRNAs.out", sample=samples),
-       expand("{sample}/stats_annotation.tsv", sample=samples),
-       "stats_annotation_all.tsv"
+    input:
+        expand("{sample}/circ_rnas.bed", sample=samples),
+        expand("{sample}/annotation_circRNAs.out", sample=samples),
+        expand("{sample}/stats_annotation.tsv", sample=samples),
+        expand("{sample}/true_intronic_circRNAs.tsv", sample=samples),
+        expand("{sample}/true_exonic_circRNAs.tsv", sample=samples),
+        expand("{sample}/true_exonic_comparison.tsv", sample=samples),
+        expand("{sample}/true_intronic_comparison.tsv", sample=samples),
+	    "mapping_stat.tsv",
+        "stats_annotation_all.tsv",
+	    "exonic_comparison_all.tsv",
+        "notebook.done", 
+        "notebook_exonic.done"
+   #    "notebook_tissuesspecificity.done"
        
 
-# rule statistiques:
+rule formatcountmatrixexonic:
+    input:
+	    config["samples"]
+    output:
+	    touch("notebook_exonic.done")
+    log:
+	    notebook = "logs/notebooks/FormatCountMatrixExonic.ipynb"
+    notebook:
+        "notebooks/FormatCountMatrixExonic.ipynb"
+        
+rule formatcountmatrix:
+    input:
+        config["samples"]
+    output:
+        touch("notebook.done")     
+    log:
+        # optional path to the processed notebook
+        notebook = "logs/notebooks/FormatCountMatrix.ipynb"
+    notebook:
+        "notebooks/FormatCountMatrix.ipynb"
+
+# rule tissuesspecificity:
 #     input:
-#         "path/to/inputfile",
-#         "path/to/other/inputfile"
+#         "cirRNAcounts.tsv"
 #     output:
-#         "path/to/outputfile",
-#         "path/to/another/outputfile"
+#         touch("notebook_tissuesspecificity.done")
 #     log:
 #         # optional path to the processed notebook
-#         notebook = "logs/notebooks/processed_notebook.ipynb"
+#         notebook = "logs/notebooks/TissueSpecificity.ipynb"
 #     notebook:
-#         "notebooks/notebook.ipynb"
+#         "notebooks/TissueSpecificity.ipynb"
+
+rule mergeexoniccomparison:
+    input:
+	    expand("{sample}/true_exonic_comparison.tsv", sample=samples)
+    output:
+	    "exonic_comparison_all.tsv"
+    shell:
+ 	    "cat {{cow,pig}}-*/true_exonic_comparison.tsv | cut -f1,3,4 |tail -n+2|sort|uniq > {output}" 
 
 rule mergestatannotation:
     input:
@@ -68,14 +106,19 @@ rule mergestatannotation:
 
 rule statannotation:
     input:
-        "{sample}/annotation_circRNAs.out",
+        "{sample}/annotation_circRNAs.out"
     output:
-        "{sample}/stats_annotation.tsv"
+        stats = "{sample}/stats_annotation.tsv",
+        intronic = "{sample}/true_intronic_circRNAs.tsv",
+        exonic = "{sample}/true_exonic_circRNAs.tsv",
+        comp_exonic = "{sample}/true_exonic_comparison.tsv",
+        comp_intronic = "{sample}/true_intronic_comparison.tsv"
     log:
         stdout = "logs/{sample}_stat_annotation.o",
         stderr = "logs/{sample}_stat_annotation.e"
     shell:
-        "python3 ../scripts/stats_annotation.py -i {input} -o {output}"
+        "python3 ../scripts/stats_annotation.py -i {input} -o_stats {output.stats}"
+        " -oi {output.intronic} -oe {output.exonic} -oce {output.comp_exonic} -oci {output.comp_intronic}"
         " 1>{log.stdout} 2>{log.stderr}"
 
 
