@@ -29,15 +29,16 @@
 ### The annotation rules
 
     [Class-1]
-for a circRNA located on upstream strand, the start-circRNA corresponds exactly to an exonic 5'splice site  OR 
-for a circRNA located on reverse strand, the start-circRNA corresponds exactly to an exonic 3'splice site
+      for a circRNA located on upstream strand, the start-circRNA corresponds exactly to an exonic 5'splice site 
+           OR   
+      for a circRNA located on reverse strand, the start-circRNA corresponds exactly to an exonic 3'splice site
 
 
 
-   [Class-2]
-
-for a circRNA located on upstream strand,the end-circRNA corresponds exactly to an exonic 3' splice site OR  
-for a circRNA located on reverse strand, the end-circRNA corresponds exactly to an exonic 5' splice site
+    [Class-2]
+     for a circRNA located on upstream strand,the end-circRNA corresponds exactly to an exonic 3' splice site
+           OR
+     for a circRNA located on reverse strand, the end-circRNA corresponds exactly to an exonic 5' splice site
 
 
 
