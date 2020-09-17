@@ -1,7 +1,7 @@
 
 ### The annotation classes
 
-#### Exonic circRNAs   (Class-E)
+#### Exonic circRNAs   (Class-Exonic)
    Both junctions correspond to exonic boundaries from a single gene located on the same strand as circRNA
    The exonic circRNAs must satisfy the three following rules  
       - the 3' junction of a circRNA must precisely correspond to an exon donnor site (3' end of an exon, ie 5' donnor site of the next intron) from a gene located on the same strand as circRNA [class-1]    
@@ -18,12 +18,12 @@
       - the 5' junction must precisely correspond to an upstream exon acceptor site from a gene located on the opposite strand of circRNA  
       - the exon donor and the exon acceptor are associated to a common gene
       
-#### Intronic circRNAs: Lariat-derived intronic circRNA and intron circle  (Class-I)
+#### Intronic circRNAs: Lariat-derived intronic circRNA and intron circle  (Class-Intronic)
   - both junctions are located within a single intron:
   - the 5' junction must precisely correspond to the 5' intron donnor site
   - the 3' junction must be compatible with a circularization event limited by the branch point (less than ~60 base pair away from the 3' intron acceptor site) 
 
-#### Sub-exonic circRNAs  (Class-SE)
+#### Sub-exonic circRNAs  (Class-Sub-Exonic)
    - both junctions are located within a single exon  [class-3]
    - Currently only the ones that are associated to a gene not reported as lnc, coding gene or pseudo-gene
 
@@ -53,26 +53,32 @@
        The strand of the circRNA is identical to the strand of the gene
 
 
-####     Class-E   
+####     Class-Exonic   
      The circRNA is retained in [class-1] and in [class-2]    
          AND   
      The both associated genes are identical
    
 ####     Class-seE
      The circRNA is retained in [class-1] OR in [class-2]  BUT NOT in Class-E
+        OR
+     The circRNA is retained in [class-1] AND in [class-2]  BUT NOT in Class-E
      
 ####     Class-asE   
      For a circRNA located on upstream strand, 
        the Start-circRNA corresponds exactly to an exonic 3'splice site 
          AND
        the End-circRNA corresponds exactly to an exonic 5' splice site
+         AND
+       the both associated genes are identical
      
      For a circRNA located on reverse strand, 
        the Start-circRNA corresponds exactly to an exonic 5'splice site
          AND
        the End-circRNA corresponds exactly to an exonic 3' splice site
+         AND
+       the both associated genes are identical
 
-####    Class-I
+####    Class-Intronic
      The circRNA is mapped inside an intron    
          AND
      the strand of the circRNA is identical to the strand of the gene
@@ -82,7 +88,7 @@
      The 3' boundary of the intron must be compatible with genomic coordinates of the circRNA: -60/5 nt
 
      
- ####   Class-SE
+ ####   Class-Sub-Exonic
      The circRNA is retained in [class-3]
          AND
      The described gene is not described as 'lnc', 'c', or 'pseudo'
