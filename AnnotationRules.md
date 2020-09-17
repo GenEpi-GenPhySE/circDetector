@@ -17,7 +17,7 @@
    - both junctions are located within a single exon  **class-3**
    - Currently only the ones that are associated to a gene not reported as lnc, coding gene or pseudo-gene
 
-#### Hypothetic-sub-exonic circRNA    class-HSE
+#### Hypothetic-sub-exonic circRNA    (Class-HSE)
    - The other sub-exonic:
       - both junctions are located within an exon and not of the previous type
  
@@ -25,7 +25,7 @@
    
    [class-2]   The class-2 includes circRNAs with End-circRNA is identified as known exonic boundary
    
-   [lass-3]   The class-3 includes circRNAs mapped inside a single exon 
+   [class-3]   The class-3 includes circRNAs mapped inside a single exon 
  
    
 
@@ -34,18 +34,18 @@
 ### The annotation rules
     For all classes the strand of the circRNA is identical to the strand of the gene
 
-    [Class-1]
+    [class-1]
       for a circRNA located on upstream strand, the Start-circRNA corresponds exactly to an exonic 5'splice site 
            OR   
       for a circRNA located on reverse strand, the Start-circRNA corresponds exactly to an exonic 3'splice site
 
 
-    [Class-2]
+    [class-2]
      for a circRNA located on upstream strand,the End-circRNA corresponds exactly to an exonic 3' splice site
            OR
      for a circRNA located on reverse strand, the End-circRNA corresponds exactly to an exonic 5' splice site
 
-     _Class-E_   
+     Class-E``    
      the circRNA is retained in class-1 and in class-2
      the both associated genes are identical
 
