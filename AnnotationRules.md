@@ -1,25 +1,29 @@
 
 ### The annotation classes
 
-#### Exonic circRNA   (Class-E)
+#### Exonic circRNAs   (Class-E)
    - Both junctions correspond to exonic boundaries from a single gene.  
    The exonic circRNAs must satisfy the three following rules  
       - the 3' junction of a circRNA must precisely correspond to an exon donnor site (3' end of an exon, ie 5' donnor site of the next intron)  [class-1]    
       - the 5' junction must precisely correspond to an upstream exon acceptor site (5' end of an exon, ie 3' acceptor site of the previous intron)  [class-2]     
       - the exon donor and the exon acceptor are associated to a common gene
       
-#### Intronic circRNA: Lariat-derived intronic circRNA and intron circle  (Class-I)
+#### Probable Exonic cirRNAs (Class-pE)
+   - only one junction correspond to an exonic boundary
+      
+#### Intronic circRNAs: Lariat-derived intronic circRNA and intron circle  (Class-I)
   - both junctions are located within a single intron:
   - the 5' junction must precisely correspond to the 5' intron donnor site
   - the 3' junction must be compatible with a circularization event limited by the branch point (less than ~60 base pair away from the 3' intron acceptor site) 
 
-#### Sub-exonic circRNA  (Class-SE)
+#### Sub-exonic circRNAs  (Class-SE)
    - both junctions are located within a single exon  **class-3**
    - Currently only the ones that are associated to a gene not reported as lnc, coding gene or pseudo-gene
 
-#### Hypothetic-sub-exonic circRNA    (Class-HSE)
+#### Hypothetic-sub-exonic circRNAs    (Class-hSE)
    - The other sub-exonic:
       - both junctions are located within an exon and not of the previous type
+      
       
       Intermediate classes
  
@@ -54,9 +58,10 @@
 
 
 ####     Class-E   
-     the circRNA is retained in [class-1] and in [class-2]
-     the both associated genes are identical
-     
+     The circRNA is retained in [class-1]   and   in [class-2]    and    the both associated genes are identical
+   
+####     Class-pE
+     The circRNA is retained in [class-1] or in [class-2] but not in Class-E
 
 ####    Class-I
      The circRNA is mapped inside an intron    
