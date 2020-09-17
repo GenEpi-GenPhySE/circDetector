@@ -13,11 +13,11 @@
     - the 3' junction must be compatible with a circularization event limited by the branch point (less than ~60 base pair away from the 3' intron acceptor site) 
 
 #### Sub-exonic circRNA
-   - One of the circular junction must be compatible with an exon splice site (see above), the other being located within the corresponding exon
-   - Currently only the ones that are associated to a gene from a type reported as pluri-exonic gene are considered true sub-exonic
+   - The junctions are located within an exon
+   - Currently only the ones that are associated to a gene not reported as lnc, coding gene or pseudo-gène
 
 #### Mono-sub-exonic circRNA
-   - When the circRNA is located with a exon of a mono-exonic gene
+   - The other sub-exonic : all circRNAs lcated within an exon
  
    [Class-1]   The class-1 includes circRNAs with Start-circRNA is identified as known exonic boundary
    
