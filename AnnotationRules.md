@@ -16,8 +16,9 @@
    - The junctions are located within an exon
    - Currently only the ones that are associated to a gene not reported as lnc, coding gene or pseudo-gène
 
-#### Mono-sub-exonic circRNA
-   - The other sub-exonic : all circRNAs lcated within an exon
+#### Hypothetic-sub-exonic circRNA
+   - The other sub-exonic:
+      - both junctions are located within an exon and not of the previous type
  
    [Class-1]   The class-1 includes circRNAs with Start-circRNA is identified as known exonic boundary
    
