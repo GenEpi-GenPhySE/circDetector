@@ -27,59 +27,54 @@
       
       
       
-      Intermediate classes
  
-   [class-1]   The class-1 includes circRNAs with Start-circRNA is identified as known exonic boundary
-   [class-2]   The class-2 includes circRNAs with End-circRNA is identified as known exonic boundary
-   [class-3]   The class-3 includes circRNAs mapped inside a single exon 
- 
-   
-
-
-
 ### The annotation rules
  
  ####    Intermediate classes
-    [class-1]
+    [class-1]  (circRNAs with Start-circRNA is identified as known exonic boundary)
       for a circRNA located on upstream strand, the Start-circRNA corresponds exactly to an exonic 5'splice site 
            OR   
       for a circRNA located on reverse strand, the Start-circRNA corresponds exactly to an exonic 3'splice site
 
 
-    [class-2]
+    [class-2] (circRNAs with End-circRNA is identified as known exonic boundary)
      for a circRNA located on upstream strand,the End-circRNA corresponds exactly to an exonic 3' splice site
            OR
      for a circRNA located on reverse strand, the End-circRNA corresponds exactly to an exonic 5' splice site
      
-     [Class-3]
-     The circRNA is mapped inside an exon of a described gene      and    the strand of the circRNA is identical to the strand of the gene
+    [Class-3] (circRNAs mapped inside a single exon) 
+     The circRNA is mapped inside an exon of a described gene      
+         AND  
+     the strand of the circRNA is identical to the strand of the gene
 
 
 ####     Class-E   
-     The circRNA is retained in [class-1]   and   in [class-2]    and    the both associated genes are identical
+     The circRNA is retained in [class-1] and in [class-2]    
+         AND   
+     the both associated genes are identical
    
 ####     Class-pE
-     The circRNA is retained in [class-1]    or   in [class-2]    but not    in Class-E
+     The circRNA is retained in [class-1] OR in [class-2]  BUT NOT in Class-E
 
 ####    Class-I
      The circRNA is mapped inside an intron    
-         and
+         AND
      the strand of the circRNA is identical to the strand of the gene
-         and
+         AND
      The 5' boundary of the intron must be compatible with genomic coordinates of the circRNA: -5/5 nt
-        and
+        AND
      The 3' boundary of the intron must be compatible with genomic coordinates of the circRNA: -60/5 nt
 
      
  ####   Class-SE
      The circRNA is retained in [class-3]
-         and
+         AND
      The described gene is not described as 'lnc', 'c', or 'pseudo'
 
 
  ####   Class-HSE
      The circRNA is retained in [class-3]
-        and
+        AND
      The described gene is described as 'lnc', 'c', or 'pseudo'
 
 
