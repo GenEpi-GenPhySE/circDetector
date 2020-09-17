@@ -32,26 +32,24 @@
  
  ####    Intermediate classes
     [class-1]  (circRNAs with Start-circRNA is identified as known exonic boundary)
-      for a circRNA located on upstream strand, the Start-circRNA corresponds exactly to an exonic 5'splice site 
-           OR   
-      for a circRNA located on reverse strand, the Start-circRNA corresponds exactly to an exonic 3'splice site
+       for a circRNA located on upstream strand, the Start-circRNA corresponds exactly to an exonic 5'splice site 
+       for a circRNA located on reverse strand, the Start-circRNA corresponds exactly to an exonic 3'splice site
 
 
     [class-2] (circRNAs with End-circRNA is identified as known exonic boundary)
-     for a circRNA located on upstream strand,the End-circRNA corresponds exactly to an exonic 3' splice site
-           OR
-     for a circRNA located on reverse strand, the End-circRNA corresponds exactly to an exonic 5' splice site
+       for a circRNA located on upstream strand,the End-circRNA corresponds exactly to an exonic 3' splice site
+       for a circRNA located on reverse strand, the End-circRNA corresponds exactly to an exonic 5' splice site
      
     [Class-3] (circRNAs mapped inside a single exon) 
-     The circRNA is mapped inside an exon of a described gene      
+       The circRNA is mapped inside an exon of a described gene      
          AND  
-     the strand of the circRNA is identical to the strand of the gene
+       The strand of the circRNA is identical to the strand of the gene
 
 
 ####     Class-E   
      The circRNA is retained in [class-1] and in [class-2]    
          AND   
-     the both associated genes are identical
+     The both associated genes are identical
    
 ####     Class-pE
      The circRNA is retained in [class-1] OR in [class-2]  BUT NOT in Class-E
