@@ -2,10 +2,10 @@
 ### The annotation classes
 
 #### Exonic circRNAs   (Class-E)
-   Both junctions correspond to exonic boundaries from a single gene located on the same strand of circRNA
+   Both junctions correspond to exonic boundaries from a single gene located on the same strand as circRNA
    The exonic circRNAs must satisfy the three following rules  
-      - the 3' junction of a circRNA must precisely correspond to an exon donnor site (3' end of an exon, ie 5' donnor site of the next intron)  [class-1]    
-      - the 5' junction must precisely correspond to an upstream exon acceptor site (5' end of an exon, ie 3' acceptor site of the previous intron)  [class-2]     
+      - the 3' junction of a circRNA must precisely correspond to an exon donnor site (3' end of an exon, ie 5' donnor site of the next intron) from a gene located on the same strand as circRNA [class-1]    
+      - the 5' junction must precisely correspond to an upstream exon acceptor site (5' end of an exon, ie 3' acceptor site of the previous intron) from a gene located on the same strand as circRNA [class-2]     
       - the exon donor and the exon acceptor are associated to a common gene
       
 #### Single-end Exonic cirRNAs (Class-seE)
@@ -14,8 +14,8 @@
 #### Antisens Exonic circRNAs   (Class-asE)
    Both junctions correspond to exonic boundaries from a single gene located on the opposite strand of circRNA  
    The exonic circRNAs must satisfy the three following rules  
-      - the 3' junction of a circRNA must precisely correspond to an exon donnor site from a gene located on the opposite strand      
-      - the 5' junction must precisely correspond to an upstream exon acceptor site from a gene located on the opposite strand   
+      - the 3' junction of a circRNA must precisely correspond to an exon donnor site from a gene located on the opposite strand of circRNA     
+      - the 5' junction must precisely correspond to an upstream exon acceptor site from a gene located on the opposite strand of circRNA  
       - the exon donor and the exon acceptor are associated to a common gene
       
 #### Intronic circRNAs: Lariat-derived intronic circRNA and intron circle  (Class-I)
