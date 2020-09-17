@@ -4,8 +4,8 @@
 #### Exonic circRNA
   - Both junctions correspond to exonic boundaries:  
    The exonic circRNAs must satisfy the two following rules
-      - the 3' junction must precisely correspond to an exon donnor site (3' end of an exon, ie (5' donnor site of the next intron) - 1) **class 1** 
-      - the 5' junction must precisely correspond to an upstream exon acceptor site (5' of an exon, (3' acceptor site of the previous intron) + 1)  **class 2** 
+      - the 3' junction of a circRNA must precisely correspond to an exon donnor site (3' end of an exon, ie 5' donnor site of the next intron)  **class 1**   
+      - the 5' junction must precisely correspond to an upstream exon acceptor site (5' end of an exon, ie 3' acceptor site of the previous intron)  **class 2**   
       
 #### Lariat-derived intronic circRNA, intronic circRNA for short
   - both junctions are located within a single intron:
