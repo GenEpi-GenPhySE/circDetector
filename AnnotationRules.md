@@ -17,7 +17,7 @@
    
    [Class-41]  The class-41 includes circRNAs mapped inside an exonand identified as sub-exonic circRNA
 
-   [Class-42]  The class-42 ncludes circRNAs mapped inside an exon and not identified as sub-exonic circRNA
+   [Class-42]  The class-42 includes circRNAs mapped inside an exon and not identified as sub-exonic circRNA
 
    
 
@@ -54,7 +54,7 @@
     [Class-41]
      The circRNA is retained in Class-4
          and
-     The described gene is not escribed as 'lnc', 'c', or 'pseudo'
+     The described gene is not described as 'lnc', 'c', or 'pseudo'
 
     [Class-42]
      The circRNA is retained in Class-4
