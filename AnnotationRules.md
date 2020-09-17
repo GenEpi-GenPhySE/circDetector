@@ -25,7 +25,9 @@ The class-5 includes circRNAs with only one boundary is identified as exonic bou
 
 Class-1
 for a circRNA located on upstream strand, the start-circRNA corresponds exactly to an exonic 5'splice site associated to a geneA and the end-circRNA corresponds exactly to an exonic 3' splice site associated to a geneB. 
+
 or
+
 for a circRNA located on reverse strand, the start-circRNA corresponds exactly to an exonic 3'splice site associated to a geneA and the end-circRNA corresponds exactly to an exonic 5' splice site associated to a geneB.
 
 and
@@ -45,16 +47,25 @@ the described gene is notdescribed as 'lnc', 'c', or 'pseudo'
 
 Class-4
 The circRNA is mapped inside an exon of a described gene (same strand)
+
 and
+
 the described gene is described as 'lnc', 'c', or 'pseudo'
 
 Class-5
+
 for a circRNA located on upstream strand, the start-circRNA corresponds exactly to an exonic 5'splice site associated to a geneA and the end-circRNA is not identified 
+
 or
+
 for a circRNA located on reverse strand, the start-circRNA corresponds exactly to an exonic 3'splice site associated to a geneA and the end-circRNA is not identified
+
 or
+
 for a circRNA located on upstream strand, the start-circRNA is not identified and the end-circRNA corresponds exactly to an exonic 3'splice site associated to a geneB.
+
 or
+
 for a circRNA located on reverse strand, the start-circRNA is not identified and the end-circRNA corresponds exactly to an exonic 5'splice site associated to a geneB.
 
 
