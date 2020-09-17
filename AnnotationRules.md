@@ -7,7 +7,7 @@
       - the 3' junction must precisely correspond to an exon donnor site (3' end of an exon, ie (5' donnor site of the next intron) - 1) **class 1** 
       - the 5' junction must precisely correspond to an upstream exon acceptor site (5' of an exon, (3' acceptor site of the previous intron) + 1)  **class 2** 
       
-#### Lariat-derive intronic circRNA, intronic circRNA for short
+#### Lariat-derived intronic circRNA, intronic circRNA for short
   - both junctions are located within a single intron:
     - the 5' junction must precisely correspond to the 5' intron donnor site
     - the 3' junction must be compatible with a circularization event limited by the branch point (less than ~60 base pair away from the 3' intron acceptor site) 
