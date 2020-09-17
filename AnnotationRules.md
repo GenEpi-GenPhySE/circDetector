@@ -30,8 +30,7 @@
    - Currently only the ones that are associated to a gene not reported as lnc, coding gene or pseudo-gene
 
 #### Hypothetic-sub-exonic circRNAs    (Class-hSE)
-   - The other sub-exonic:
-      - both junctions are located within an exon and not of the previous type
+   - The other sub-exonic: both junctions are located within an exon and not of the previous type
       
       
       
