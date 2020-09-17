@@ -9,9 +9,9 @@
       - the exon donor and the exon acceptor are associated to a common gene
       
 #### Single-end Exonic cirRNAs (Class-seE)
-   Only one junction of the circRNA corresponds to an exonic boundary
-   or
-   The gene associated with each junctions is not concordant
+   Only one junction of the circRNA corresponds to an exonic boundary   
+     or
+  Both junctions correspond to exonic boundaries from two genes
    
 #### Antisens Exonic circRNAs   (Class-asE)
    Both junctions correspond to exonic boundaries from a single gene located on the opposite strand of circRNA  
