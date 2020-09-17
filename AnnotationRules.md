@@ -17,7 +17,7 @@
   - the 3' junction must be compatible with a circularization event limited by the branch point (less than ~60 base pair away from the 3' intron acceptor site) 
 
 #### Sub-exonic circRNAs  (Class-SE)
-   - both junctions are located within a single exon  **class-3**
+   - both junctions are located within a single exon  [class-3]
    - Currently only the ones that are associated to a gene not reported as lnc, coding gene or pseudo-gene
 
 #### Hypothetic-sub-exonic circRNAs    (Class-hSE)
