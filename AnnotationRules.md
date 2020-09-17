@@ -19,7 +19,7 @@ Intron circle: the two boundaries of the circular junction coincide with those o
 
 ### The annotation rules
 
-[Class-1]
+      ###[Class-1]
 
 for a circRNA located on upstream strand, the start-circRNA corresponds exactly to an exonic 5'splice site associated to a geneA and the end-circRNA corresponds exactly to an exonic 3' splice site associated to a geneB. 
 
