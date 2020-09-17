@@ -32,8 +32,7 @@
 
 
 ### The annotation rules
-    For all classes the strand of the circRNA is identical to the strand of the gene
-
+    
     [class-1]
       for a circRNA located on upstream strand, the Start-circRNA corresponds exactly to an exonic 5'splice site 
            OR   
@@ -44,28 +43,35 @@
      for a circRNA located on upstream strand,the End-circRNA corresponds exactly to an exonic 3' splice site
            OR
      for a circRNA located on reverse strand, the End-circRNA corresponds exactly to an exonic 5' splice site
+     
+     [Class-3]
+     The circRNA is mapped inside an exon of a described gene   
+          and
+     the strand of the circRNA is identical to the strand of the gene
 
-     Class-E``    
-     the circRNA is retained in class-1 and in class-2
+###     Class-E   
+     the circRNA is retained in [class-1] and in [class-2]
      the both associated genes are identical
+     
 
 
-    [Class-I]
-     The circRNA is mapped inside an intron (same strand)
+###    Class-I
+     The circRNA is mapped inside an intron    
+         and
+     the strand of the circRNA is identical to the strand of the gene
          and
      The 5' boundary of the intron must be compatible with genomic coordinates of the circRNA: -5/5 nt
         and
      The 3' boundary of the intron must be compatible with genomic coordinates of the circRNA: -60/5 nt
 
-    [Class-3]
-     The circRNA is mapped inside an exon of a described gene (same strand)
+    
      
-    [Class-SE]
-     The circRNA is retained in Class-4
+ ###   Class-SE
+     The circRNA is retained in Class-3
          and
      The described gene is not described as 'lnc', 'c', or 'pseudo'
 
-    [Class-HSE]
+ ###   Class-HSE
      The circRNA is retained in Class-4
         and
      The described gene is described as 'lnc', 'c', or 'pseudo'
