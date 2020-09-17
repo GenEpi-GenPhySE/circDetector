@@ -2,18 +2,19 @@
 ### The annotation classes
 
 #### Exonic circRNA
-  - Both junctions correspond to exonic boundaries:  
-   The exonic circRNAs must satisfy the two following rules
-      - the 3' junction of a circRNA must precisely correspond to an exon donnor site (3' end of an exon, ie 5' donnor site of the next intron)  **class 1**   
-      - the 5' junction must precisely correspond to an upstream exon acceptor site (5' end of an exon, ie 3' acceptor site of the previous intron)  **class 2**   
+   - Both junctions correspond to exonic boundaries from a single gene.  
+   The exonic circRNAs must satisfy the three following rules  **class-12**
+      - the 3' junction of a circRNA must precisely correspond to an exon donnor site (3' end of an exon, ie 5' donnor site of the next intron)  **class-1**    
+      - the 5' junction must precisely correspond to an upstream exon acceptor site (5' end of an exon, ie 3' acceptor site of the previous intron)  **class-2**   
+      - the exon donor and the exon acceptor are associated to a common gene
       
-#### Lariat-derived intronic circRNA, intronic circRNA for short
+#### Lariat-derived intronic circRNA and intron circle, intronic circRNA for short  Class-3
   - both junctions are located within a single intron:
-    - the 5' junction must precisely correspond to the 5' intron donnor site
-    - the 3' junction must be compatible with a circularization event limited by the branch point (less than ~60 base pair away from the 3' intron acceptor site) 
+  - the 5' junction must precisely correspond to the 5' intron donnor site
+  - the 3' junction must be compatible with a circularization event limited by the branch point (less than ~60 base pair away from the 3' intron acceptor site) 
 
 #### Sub-exonic circRNA
-   - The junctions are located within an exon
+   - both junctions are located within a single exon
    - Currently only the ones that are associated to a gene not reported as lnc, coding gene or pseudo-gène
 
 #### Hypothetic-sub-exonic circRNA
