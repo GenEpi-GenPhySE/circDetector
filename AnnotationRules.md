@@ -2,7 +2,7 @@
 ### The annotation classes
 
 #### Exonic circRNAs   (Class-E)
-   Both junctions correspond to exonic boundaries from a single gene.  
+   Both junctions correspond to exonic boundaries from a single gene located on the same strand of circRNA
    The exonic circRNAs must satisfy the three following rules  
       - the 3' junction of a circRNA must precisely correspond to an exon donnor site (3' end of an exon, ie 5' donnor site of the next intron)  [class-1]    
       - the 5' junction must precisely correspond to an upstream exon acceptor site (5' end of an exon, ie 3' acceptor site of the previous intron)  [class-2]     
@@ -10,6 +10,13 @@
       
 #### Single-end Exonic cirRNAs (Class-seE)
    only one junction correspond to an exonic boundary
+   
+#### Antisens Exonic circRNAs   (Class-asE)
+   Both junctions correspond to exonic boundaries from a single gene located on the opposite strand of circRNA  
+   The exonic circRNAs must satisfy the three following rules  
+      - the 3' junction of a circRNA must precisely correspond to an exon donnor site from a gene located on the opposite strand      
+      - the 5' junction must precisely correspond to an upstream exon acceptor site from a gene located on the opposite strand   
+      - the exon donor and the exon acceptor are associated to a common gene
       
 #### Intronic circRNAs: Lariat-derived intronic circRNA and intron circle  (Class-I)
   - both junctions are located within a single intron:
@@ -53,6 +60,17 @@
    
 ####     Class-seE
      The circRNA is retained in [class-1] OR in [class-2]  BUT NOT in Class-E
+     
+####     Class-asE   
+     For a circRNA located on upstream strand, 
+       the Start-circRNA corresponds exactly to an exonic 3'splice site 
+         AND
+       the End-circRNA corresponds exactly to an exonic 5' splice site
+     
+     For a circRNA located on reverse strand, 
+       the Start-circRNA corresponds exactly to an exonic 5'splice site
+         AND
+       the End-circRNA corresponds exactly to an exonic 3' splice site
 
 ####    Class-I
      The circRNA is mapped inside an intron    
