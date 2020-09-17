@@ -8,7 +8,7 @@
       - the 5' junction must precisely correspond to an upstream exon acceptor site (5' end of an exon, ie 3' acceptor site of the previous intron)  [class-2]     
       - the exon donor and the exon acceptor are associated to a common gene
       
-#### Probable Exonic cirRNAs (Class-pE)
+#### Single-end Exonic cirRNAs (Class-seE)
    only one junction correspond to an exonic boundary
       
 #### Intronic circRNAs: Lariat-derived intronic circRNA and intron circle  (Class-I)
@@ -51,7 +51,7 @@
          AND   
      The both associated genes are identical
    
-####     Class-pE
+####     Class-seE
      The circRNA is retained in [class-1] OR in [class-2]  BUT NOT in Class-E
 
 ####    Class-I
