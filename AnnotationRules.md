@@ -9,7 +9,7 @@
       - the exon donor and the exon acceptor are associated to a common gene
       
 #### Single-end Exonic cirRNAs (Class-seE)
-   only one junction correspond to an exonic boundary
+   Only one junction of the circRNA corresponds to an exonic boundary
    
 #### Antisens Exonic circRNAs   (Class-asE)
    Both junctions correspond to exonic boundaries from a single gene located on the opposite strand of circRNA  
@@ -78,7 +78,7 @@
      the strand of the circRNA is identical to the strand of the gene
          AND
      The 5' boundary of the intron must be compatible with genomic coordinates of the circRNA: -5/5 nt
-        AND
+         AND
      The 3' boundary of the intron must be compatible with genomic coordinates of the circRNA: -60/5 nt
 
      
@@ -90,7 +90,7 @@
 
  ####   Class-HSE
      The circRNA is retained in [class-3]
-        AND
+         AND
      The described gene is described as 'lnc', 'c', or 'pseudo'
 
 
