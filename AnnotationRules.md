@@ -10,7 +10,7 @@
       
 #### Single-end Exonic cirRNAs (Class-seE)
    Only one junction of the circRNA corresponds to an exonic boundary   
-     or
+     or   
   Both junctions correspond to exonic boundaries from two genes
    
 #### Antisens Exonic circRNAs   (Class-asE)
