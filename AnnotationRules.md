@@ -8,7 +8,7 @@
       - the 5' junction must precisely correspond to an upstream exon acceptor site (5' end of an exon, ie 3' acceptor site of the previous intron)  **class-2**   
       - the exon donor and the exon acceptor are associated to a common gene
       
-#### Lariat-derived intronic circRNA and intron circle, intronic circRNA for short  (Class-I)
+#### Intronic circRNA: Lariat-derived intronic circRNA and intron circle  (Class-I)
   - both junctions are located within a single intron:
   - the 5' junction must precisely correspond to the 5' intron donnor site
   - the 3' junction must be compatible with a circularization event limited by the branch point (less than ~60 base pair away from the 3' intron acceptor site) 
@@ -20,6 +20,8 @@
 #### Hypothetic-sub-exonic circRNA    (Class-HSE)
    - The other sub-exonic:
       - both junctions are located within an exon and not of the previous type
+      
+      Intermediate classes
  
    [class-1]   The class-1 includes circRNAs with Start-circRNA is identified as known exonic boundary
    
@@ -32,7 +34,8 @@
 
 
 ### The annotation rules
-    
+ 
+ ###    Intermediate classes
     [class-1]
       for a circRNA located on upstream strand, the Start-circRNA corresponds exactly to an exonic 5'splice site 
            OR   
@@ -49,11 +52,11 @@
           and
      the strand of the circRNA is identical to the strand of the gene
 
+
 ###     Class-E   
      the circRNA is retained in [class-1] and in [class-2]
      the both associated genes are identical
      
-
 
 ###    Class-I
      The circRNA is mapped inside an intron    
@@ -64,12 +67,12 @@
         and
      The 3' boundary of the intron must be compatible with genomic coordinates of the circRNA: -60/5 nt
 
-    
      
  ###   Class-SE
      The circRNA is retained in Class-3
          and
      The described gene is not described as 'lnc', 'c', or 'pseudo'
+
 
  ###   Class-HSE
      The circRNA is retained in Class-4
