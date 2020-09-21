@@ -92,11 +92,15 @@
  ####   Class-Sub-Exonic
      The circRNA is retained in [class-3]
          AND
+     The circRNA is not retained in Class-Exonic
+         AND
      The described gene is not described as 'lnc', 'c', or 'pseudo'
 
 
- ####   Class-HSE
+ ####   Class-hSE
      The circRNA is retained in [class-3]
+         AND
+     The circRNA is not retained in Class-Exonic
          AND
      The described gene is described as 'lnc', 'c', or 'pseudo'
 
