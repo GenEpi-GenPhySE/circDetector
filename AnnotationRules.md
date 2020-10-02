@@ -28,14 +28,16 @@
   - the 3' junction must be compatible with a circularization event limited by the branch point (less than ~60 base pair away from the 3' intron acceptor site) 
 
 #### Sub-exonic circRNAs from mono-exonic genes  (Class: SubExo-meg)
-   - both junctions are located within a single exon  [class-3]
+   - Both junctions are located within a single exon [class-3]
+   - This class contains no circRNA classified as Exonic
    - only the ones that are associated to a gene not reported as lnc, coding gene or pseudo-gene
-      This class contains no circRNA classified as Exonic
+      
 
 #### Sub-exonic circRNAs from pluri-exonic genes   (Class: SubExo-pleg)
-   - The other sub-exonic: both junctions are located within an exon 
+   - Both junctions are located within a single exon [class-3]
+   - This class contains no circRNA classified as Exonic
    - Only the ones that are associated to a gene reported as lnc, coding gene or pseudo-gene
-      This class contains no circRNA classified as Exonic
+      
       
       
       
