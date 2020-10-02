@@ -12,6 +12,7 @@
    Only one junction of the circRNA corresponds to an exonic boundary   
      or   
   Both junctions correspond to exonic boundaries from two genes
+  
   This class contains no circRNA classified as Exonic
    
 #### Antisens Exonic circRNAs   (Class-asExo)
