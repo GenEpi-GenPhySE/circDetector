@@ -1,7 +1,7 @@
 
 ### The annotation classes
 
-#### Exonic circRNAs   (Class: Exonic)
+#### Exonic circRNAs   [Class: Exonic]
    Both junctions correspond to exonic boundaries from a single gene located on the same strand as circRNA
    The circRNAs must satisfy the three following rules  
       - the 3' junction of a circRNA must precisely correspond to an exon donor site (3' end of an exon, ie 5' donor site of the next intron) from a gene located on the same strand as circRNA     
