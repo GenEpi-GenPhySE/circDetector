@@ -4,7 +4,7 @@
 #### Exonic circRNAs   (Class: Exonic)
    Both junctions correspond to exonic boundaries from a single gene located on the same strand as circRNA
    The circRNAs must satisfy the three following rules  
-      - the 3' junction of a circRNA must precisely correspond to an exon donor site (3' end of an exon, ie 5' donnor site of the next intron) from a gene located on the same strand as circRNA [class-1]    
+      - the 3' junction of a circRNA must precisely correspond to an exon donor site (3' end of an exon, ie 5' donor site of the next intron) from a gene located on the same strand as circRNA [class-1]    
       - the 5' junction must precisely correspond to an upstream exon acceptor site (5' end of an exon, ie 3' acceptor site of the previous intron) from a gene located on the same strand as circRNA [class-2]     
       - the exon donor and the exon acceptor are associated to a common gene
       
