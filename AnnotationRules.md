@@ -25,7 +25,8 @@
 #### Intronic circRNAs: Lariat-derived intronic circRNA and intron circle  (Class: Intronic)
   - both junctions are located within a single intron
   - the 5' junction must precisely correspond to the 5' intron donor site
-  - the 3' junction must be compatible with a circularization event limited by the branch point (less than ~60 base pair away from the 3' intron acceptor site) 
+  - the 3' junction must be compatible with a circularization event limited by the branch point (less than ~60 base pair away from the 3' intron acceptor site)     
+  This class contains no circRNA classified as Exonic
 
 #### Sub-exonic circRNAs from mono-exonic genes  (Class: SubExo-meg)
    - Both junctions are located within a single exon [class-3]
@@ -67,9 +68,9 @@
      The both associated genes are identical
    
 ####     Class: seExo
-     The circRNA is retained in [class-1] OR in [class-2]  BUT NOT in Class Exonic
+     The circRNA is retained in [class-1] OR in [class-2]  BUT NOT in [Class Exonic]
         OR
-     The circRNA is retained in [class-1] AND in [class-2]  BUT NOT in Class Exonic
+     The circRNA is retained in [class-1] AND in [class-2]  BUT NOT in [Class Exonic]
      
 ####     Class: asExo   
      For a circRNA located on upstream strand, 
@@ -84,7 +85,8 @@
          AND
        the End-circRNA corresponds exactly to an exonic 3' splice site
          AND
-       the both associated genes are identical
+       the both associated genes are identical   
+       The circRNA is not retained in [Class Exonic]
 
 ####    Class: Intronic
      The circRNA is mapped inside an intron    
@@ -93,13 +95,14 @@
          AND
      The 5' boundary of the intron must be compatible with genomic coordinates of the circRNA: -5/5 nt
          AND
-     The 3' boundary of the intron must be compatible with genomic coordinates of the circRNA: -60/5 nt
+     The 3' boundary of the intron must be compatible with genomic coordinates of the circRNA: -60/5 nt   
+     The circRNA is not retained in [Class Exonic]
 
      
  ####   Class SubExo-meg
      The circRNA is retained in [class-3]
          AND
-     The circRNA is not retained in Class Exonic
+     The circRNA is not retained in [Class Exonic]
          AND
      The described gene is not described as 'lnc', 'c', or 'pseudo'
 
@@ -107,7 +110,7 @@
  ####   Class SubExo-pleg
      The circRNA is retained in [class-3]
          AND
-     The circRNA is not retained in Class Exonic
+     The circRNA is not retained in [Class Exonic]
          AND
      The described gene is described as 'lnc', 'c', or 'pseudo'
 
