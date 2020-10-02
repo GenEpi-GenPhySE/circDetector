@@ -30,12 +30,12 @@
 #### Sub-exonic circRNAs from mono-exonic genes  (Class: SubExo-meg)
    - both junctions are located within a single exon  [class-3]
    - only the ones that are associated to a gene not reported as lnc, coding gene or pseudo-gene
-   This class contains no circRNA classified as Exonic
+      This class contains no circRNA classified as Exonic
 
 #### Sub-exonic circRNAs from pluri-exonic genes   (Class: SubExo-pleg)
    - The other sub-exonic: both junctions are located within an exon 
    - Only the ones that are associated to a gene reported as lnc, coding gene or pseudo-gene
-   This class contains no circRNA classified as Exonic
+      This class contains no circRNA classified as Exonic
       
       
       
