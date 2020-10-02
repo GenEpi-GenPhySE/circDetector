@@ -11,17 +11,16 @@
 #### Single-end Exonic cirRNAs (Class: seExo)
    Only one junction of the circRNA corresponds to an exonic boundary   
      or   
-  Both junctions correspond to exonic boundaries from two genes
-  
-  This class contains no circRNA classified as Exonic
+   Both junctions correspond to exonic boundaries from two genes      
+   This class contains no circRNA classified as Exonic
    
 #### Antisens Exonic circRNAs   (Class-asExo)
    Both junctions correspond to exonic boundaries from a single gene located on the opposite strand of circRNA  
    The circRNAs must satisfy the three following rules  
       - the 3' junction of a circRNA must precisely correspond to an exon donor site from a gene located on the opposite strand of circRNA     
       - the 5' junction must precisely correspond to an upstream exon acceptor site from a gene located on the opposite strand of circRNA  
-      - the exon donor and the exon acceptor are associated to a common gene
-    This class contains no circRNA classified as Exonic
+      - the exon donor and the exon acceptor are associated to a common gene    
+   This class contains no circRNA classified as Exonic
       
 #### Intronic circRNAs: Lariat-derived intronic circRNA and intron circle  (Class: Intronic)
   - both junctions are located within a single intron
