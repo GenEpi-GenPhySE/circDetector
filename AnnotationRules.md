@@ -4,17 +4,17 @@
 #### Exonic circRNAs   (Class: Exonic)
    Both junctions correspond to exonic boundaries from a single gene located on the same strand as circRNA
    The circRNAs must satisfy the three following rules  
-      - the 3' junction of a circRNA must precisely correspond to an exon donor site (3' end of an exon, ie 5' donor site of the next intron) from a gene located on the same strand as circRNA [class-1]    
-      - the 5' junction must precisely correspond to an upstream exon acceptor site (5' end of an exon, ie 3' acceptor site of the previous intron) from a gene located on the same strand as circRNA [class-2]     
+      - the 3' junction of a circRNA must precisely correspond to an exon donor site (3' end of an exon, ie 5' donor site of the next intron) from a gene located on the same strand as circRNA     
+      - the 5' junction must precisely correspond to an upstream exon acceptor site (5' end of an exon, ie 3' acceptor site of the previous intron) from a gene located on the same strand as circRNA      
       - the exon donor and the exon acceptor are associated to a common gene
       
-#### Single-end Exonic cirRNAs (Class: seExo)
+#### Single-end Exonic cirRNAs [Class: seExo]
    Only one junction of the circRNA corresponds to an exonic boundary   
      or   
    Both junctions correspond to exonic boundaries from two genes      
    This class contains no circRNA classified as Exonic
    
-#### Antisens Exonic circRNAs   (Class-asExo)
+#### Antisens Exonic circRNAs   [Class-asExo]
    Both junctions correspond to exonic boundaries from a single gene located on the opposite strand of circRNA  
    The circRNAs must satisfy the three following rules  
       - the 3' junction of a circRNA must precisely correspond to an exon donor site from a gene located on the opposite strand of circRNA     
@@ -22,20 +22,20 @@
       - the exon donor and the exon acceptor are associated to a common gene    
    This class contains no circRNA classified as Exonic
       
-#### Intronic circRNAs: Lariat-derived intronic circRNA and intron circle  (Class: Intronic)
+#### Intronic circRNAs: Lariat-derived intronic circRNA and intron circle  [Class: Intronic]
   - both junctions are located within a single intron
   - the 5' junction must precisely correspond to the 5' intron donor site
   - the 3' junction must be compatible with a circularization event limited by the branch point (less than ~60 base pair away from the 3' intron acceptor site)     
   This class contains no circRNA classified as Exonic
 
-#### Sub-exonic circRNAs from mono-exonic genes  (Class: SubExo-meg)
-   - Both junctions are located within a single exon [class-3]
+#### Sub-exonic circRNAs from mono-exonic genes  [Class: SubExo-meg]
+   - Both junctions are located within a single exon 
    - This class contains no circRNA classified as Exonic
    - only the ones that are associated to a gene not reported as lnc, coding gene or pseudo-gene
       
 
-#### Sub-exonic circRNAs from pluri-exonic genes   (Class: SubExo-pleg)
-   - Both junctions are located within a single exon [class-3]
+#### Sub-exonic circRNAs from pluri-exonic genes   [Class: SubExo-pleg]
+   - Both junctions are located within a single exon 
    - This class contains no circRNA classified as Exonic
    - Only the ones that are associated to a gene reported as lnc, coding gene or pseudo-gene
       
