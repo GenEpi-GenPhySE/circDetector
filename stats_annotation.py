@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-#usage: python3 scripts/stats_annotation.py -i results_pig_testis_31/annotation_circRNAs_f_0_95.out -o stats_annotation.tsv
 
 # Imports:
 import os, re, sys, csv, argparse
@@ -26,7 +25,8 @@ def intersection(lst1, lst2):
     """ Return the intersection between two lists"""
     return list(set(lst1) & set(lst2)) 
 
-def get_exonic_circrnas(row):
+
+def get_exonic_circrnas(df):
     """ Get statistics about exonic circRNAs from the annotation_circRNA.out file"""
     # Arrays, dicts:
     exonic_circ_names, monoexonic_circ_names, true_exonic, single_end_circ_names = [], [], [], []
@@ -34,195 +34,197 @@ def get_exonic_circrnas(row):
     # Counter exonic circRNAs:
     nb_monoexonic, nb_start_end_exonic, nb_antisens_exonic, nb_single_annotated_junction = 0, 0, 0, 0
 
-    exon_id_start = row.exons_id_start.split(",")
-    exon_start = str(exon_id_start[0])
-    exon_start_tmp = exon_start.split("_")
-    exon_start = exon_start_tmp[0]
-    exon_id_end = row.exons_id_end.split(",")
-    exon_end = str(exon_id_end[0])
-    exon_end_tmp = exon_end.split("_")
-    exon_end = exon_end_tmp[0]
+    for index, row in df.iterrows():
 
-    if ((len(row.exons_id_start) > 0 or len(row.exons_id_end) > 0)
-        and len(row.intron_name) == 0):
-        exonic_circ_names.append(row.circ_rna_name)
-        if row.circ_rna_name in exonic_circ_names:
-            if row.strand == "+": 
-                if ("5" and "+") in row.exons_id_start:
-                    if len(row.exons_id_end)==0:
-                        nb_single_annotated_junction += 1
-                        ccr_single_annot[row.circ_rna_name] = row.nb_ccr
-                        single_end_circ_names.append(row.circ_rna_name)
-                    if ("3" and "+") in row.exons_id_end:
-                        nb_start_end_exonic += 1
-                        true_exonic.append(row)
-                        ccr_start_end_exonic[row.circ_rna_name] = row.nb_ccr
-                        if ((len(exon_id_start)==1 and len(exon_id_end)==1) and (exon_start == exon_end)):
-                            nb_monoexonic += 1
-                            monoexonic_circ_names.append(row.circ_rna_name)
-                if ("3" and "+") in row.exons_id_end:
-                    if len(row.exons_id_start)==0:
-                        nb_single_annotated_junction += 1
-                        ccr_single_annot[row.circ_rna_name] = row.nb_ccr
-                        single_end_circ_names.append(row.circ_rna_name)
-                if ("3" and "-") in row.exons_id_start:
-                    if ("5" and "-") in row.exons_id_end:
-                        nb_antisens_exonic += 1
-            elif row.strand == "-":                         
-                if ("5" and "-") in row.exons_id_end:
-                    if len(row.exons_id_start)==0:
-                        nb_single_annotated_junction += 1
-                        ccr_single_annot[row.circ_rna_name] = row.nb_ccr
-                        single_end_circ_names.append(row.circ_rna_name)
-                    if ("3" and "-") in row.exons_id_start:
-                        nb_start_end_exonic += 1
-                        true_exonic.append(row)
-                        ccr_start_end_exonic[row.circ_rna_name] = row.nb_ccr
-                        if ((len(exon_id_start)==1 and len(exon_id_end)==1) and (exon_start == exon_end)):
-                            nb_monoexonic += 1
-                            monoexonic_circ_names.append(row.circ_rna_name)
-                if ("3" and "-") in row.exons_id_start:
-                    if len(row.exons_id_end)==0:
-                        nb_single_annotated_junction += 1
-                        ccr_single_annot[row.circ_rna_name] = row.nb_ccr
-                        single_end_circ_names.append(row.circ_rna_name)
-                if ("5" and "+") in row.exons_id_start:
-                    if ("3" and "+") in row.exons_id_end:
-                        nb_antisens_exonic += 1
+        exon_id_start = row.exons_id_start.split(",")
+        exon_start = str(exon_id_start[0])
+        exon_start_tmp = exon_start.split("_")
+        exon_start = exon_start_tmp[0]
+        exon_id_end = row.exons_id_end.split(",")
+        exon_end = str(exon_id_end[0])
+        exon_end_tmp = exon_end.split("_")
+        exon_end = exon_end_tmp[0]
+
+        if row.nb_ccr >= 5: 
+            if ((len(row.exons_id_start) > 0 or len(row.exons_id_end) > 0)
+                and len(row.intron_name) == 0):
+                exonic_circ_names.append(row.circ_rna_name)
+                if row.circ_rna_name in exonic_circ_names:
+                    if row.strand == "+": 
+                        if ("5" and "+") in row.exons_id_start:
+                            if len(row.exons_id_end)==0:
+                                nb_single_annotated_junction += 1
+                                ccr_single_annot[row.circ_rna_name] = row.nb_ccr
+                                single_end_circ_names.append(row.circ_rna_name)
+                            if ("3" and "+") in row.exons_id_end:
+                                nb_start_end_exonic += 1
+                                true_exonic.append(row)
+                                ccr_start_end_exonic[row.circ_rna_name] = row.nb_ccr
+                                if ((len(exon_id_start)==1 and len(exon_id_end)==1) and (exon_start == exon_end)):
+                                    nb_monoexonic += 1
+                                    monoexonic_circ_names.append(row.circ_rna_name)
+                        if ("3" and "+") in row.exons_id_end:
+                            if len(row.exons_id_start)==0:
+                                nb_single_annotated_junction += 1
+                                ccr_single_annot[row.circ_rna_name] = row.nb_ccr
+                                single_end_circ_names.append(row.circ_rna_name)
+                        if ("3" and "-") in row.exons_id_start:
+                            if ("5" and "-") in row.exons_id_end:
+                                nb_antisens_exonic += 1
+                    elif row.strand == "-":                         
+                        if ("5" and "-") in row.exons_id_end:
+                            if len(row.exons_id_start)==0:
+                                nb_single_annotated_junction += 1
+                                ccr_single_annot[row.circ_rna_name] = row.nb_ccr
+                                single_end_circ_names.append(row.circ_rna_name)
+                            if ("3" and "-") in row.exons_id_start:
+                                nb_start_end_exonic += 1
+                                true_exonic.append(row)
+                                ccr_start_end_exonic[row.circ_rna_name] = row.nb_ccr
+                                if ((len(exon_id_start)==1 and len(exon_id_end)==1) and (exon_start == exon_end)):
+                                    nb_monoexonic += 1
+                                    monoexonic_circ_names.append(row.circ_rna_name)
+                        if ("3" and "-") in row.exons_id_start:
+                            if len(row.exons_id_end)==0:
+                                nb_single_annotated_junction += 1
+                                ccr_single_annot[row.circ_rna_name] = row.nb_ccr
+                                single_end_circ_names.append(row.circ_rna_name)
+                        if ("5" and "+") in row.exons_id_start:
+                            if ("3" and "+") in row.exons_id_end:
+                                nb_antisens_exonic += 1
     return true_exonic, nb_start_end_exonic, nb_single_annotated_junction, single_end_circ_names, ccr_single_annot, monoexonic_circ_names
 
-def get_subexonic_circrnas(row, monoexonic_circ_names, intronic_circ_names):
-    # Arrays, dicts:
-    infraexonic_tot_names, infraexonic_circ_names, subexonic = [], [], []
-    ccr_infraexonic = dict()
-    # Counter subexonic circRNAs:
-    nb_infraexonic, nb_infraexonic_tot, nb_infraexonic_sens, nb_infraexonic_antisens = 0, 0, 0, 0
 
-    if ((len(row.gene_id_ife) > 0) and (row.circ_rna_name not in monoexonic_circ_names)):
-        if (("_5_c_+" not in row.exons_id_start) and ("_5_lnc_+" not in row.exons_id_start) and
-            ("_3_c_-" not in row.exons_id_start) and ("_3_lnc_-" not in row.exons_id_start) and 
-            ("_3_c_+" not in row.exons_id_end) and ("_3_lnc_+" not in row.exons_id_end) and 
-            ("_5_c_-" not in row.exons_id_end) and ("_5_lnc_-" not in row.exons_id_end)): 
-            if len(row.gene_id_start) == 0 and len(row.gene_id_end) == 0:
-                nb_infraexonic_tot += 1
-                infraexonic_tot_names.append(row.circ_rna_name)
-                if row.circ_rna_name not in intronic_circ_names:
-                    if row.strand == "+":
-                        if "+" in row.gene_id_ife:
-                            nb_infraexonic_sens += 1
-                            subexonic.append(row)
-                            ccr_infraexonic[row.circ_rna_name] = row.nb_ccr
-                            infraexonic_circ_names.append(row.circ_rna_name)
-                        elif "-" in row.gene_id_ife:
-                            nb_infraexonic_antisens += 1
-                    elif row.strand == "-":
-                        if "-" in row.gene_id_ife:
-                            nb_infraexonic_sens += 1
-                            subexonic.append(row)
-                            infraexonic_circ_names.append(row.circ_rna_name)
-                            ccr_infraexonic[row.circ_rna_name] = row.nb_ccr
-                        elif "+" in row.gene_id_ife:
-                            nb_infraexonic_antisens += 1
-            elif ((len(row.gene_id_start) > 0 and len(row.gene_id_end) == 0) or 
-                    (len(row.gene_id_start) == 0  and len(row.gene_id_end) > 0)):
-                nb_infraexonic_tot += 1
-                infraexonic_tot_names.append(row.circ_rna_name)
-                if row.circ_rna_name not in intronic_circ_names:
-                    if row.strand == "+":
-                        if "+" in row.gene_id_ife:
-                            nb_infraexonic_sens += 1
-                            subexonic.append(row)
-                            infraexonic_circ_names.append(row.circ_rna_name)
-                            ccr_infraexonic[row.circ_rna_name] = row.nb_ccr
-                        elif "-" in row.gene_id_ife:
-                            nb_infraexonic_antisens += 1
-                    elif row.strand == "-":
-                        if "-" in row.gene_id_ife:
-                            nb_infraexonic_sens += 1
-                            subexonic.append(row)
-                            infraexonic_circ_names.append(row.circ_rna_name)
-                            ccr_infraexonic[row.circ_rna_name] = row.nb_ccr
-                        elif "+" in row.gene_id_ife:
-                            nb_infraexonic_antisens += 1
-    return subexonic, infraexonic_circ_names, nb_infraexonic_sens, ccr_infraexonic
-
-def get_intronic_circrnas(row):
+def get_intronic_circrnas(df):
     # Arrays, dicts:
     intronic_circ_names, true_intronic = [], []
     ccr_true_intronic = dict()
     # Counter intronic circRNAs:
     nb_true_intronic = 0
 
-    if len(row.intron_name) > 0:  
-        if row.strand == "+":
-            if (row.end_i - row.end) in range(-5,60):
-                if (row.start - row.start_i) in range(-5,5) or (row.start==row.start_i):
-                    nb_true_intronic += 1
-                    true_intronic.append(row)
-                    ccr_true_intronic[row.circ_rna_name] = row.nb_ccr
-                    intronic_circ_names.append(row.circ_rna_name)
-            elif (row.start == row.start_i and (row.end_i - row.end) > 32): 
-                nb_true_intronic += 1
-                true_intronic.append(row)
-                ccr_true_intronic[row.circ_rna_name] = row.nb_ccr
-                intronic_circ_names.append(row.circ_rna_name)
-        elif row.strand == "-":        
-            if (row.start - row.start_i) in range(-5,60):             
-                if ((row.end - row.end_i) in range(-5,5) or (row.end == row.end_i)): 
-                    nb_true_intronic += 1
-                    true_intronic.append(row)
-                    ccr_true_intronic[row.circ_rna_name] = row.nb_ccr
-                    intronic_circ_names.append(row.circ_rna_name)
-            elif (row.end == row.end_i and (row.start - row.start_i) > 60): 
-                nb_true_intronic += 1
-                true_intronic.append(row)
-                ccr_true_intronic[row.circ_rna_name] = row.nb_ccr
-                intronic_circ_names.append(row.circ_rna_name)   
+    for index, row in df.iterrows():
+        if row.nb_ccr >= 5: 
+            if len(row.intron_name) > 0:  
+                if row.strand == "+":
+                    if (row.end_i - row.end) in range(-5,60):
+                        if (row.start - row.start_i) in range(-5,5) or (row.start==row.start_i):
+                            nb_true_intronic += 1
+                            true_intronic.append(row)
+                            ccr_true_intronic[row.circ_rna_name] = row.nb_ccr
+                            intronic_circ_names.append(row.circ_rna_name)
+                    elif (row.start == row.start_i and (row.end_i - row.end) > 32): 
+                        nb_true_intronic += 1
+                        true_intronic.append(row)
+                        ccr_true_intronic[row.circ_rna_name] = row.nb_ccr
+                        intronic_circ_names.append(row.circ_rna_name)
+                elif row.strand == "-":        
+                    if (row.start - row.start_i) in range(-5,60):             
+                        if ((row.end - row.end_i) in range(-5,5) or (row.end == row.end_i)): 
+                            nb_true_intronic += 1
+                            true_intronic.append(row)
+                            ccr_true_intronic[row.circ_rna_name] = row.nb_ccr
+                            intronic_circ_names.append(row.circ_rna_name)
+                    elif (row.end == row.end_i and (row.start - row.start_i) > 60): 
+                        nb_true_intronic += 1
+                        true_intronic.append(row)
+                        ccr_true_intronic[row.circ_rna_name] = row.nb_ccr
+                        intronic_circ_names.append(row.circ_rna_name)   
     return true_intronic, nb_true_intronic, ccr_true_intronic, intronic_circ_names
+
+
+def get_subexonic_circrnas(df, monoexonic_circ_names, intronic_circ_names):
+    # Arrays, dicts:
+    infraexonic_tot_names, infraexonic_circ_names, subexonic = [], [], []
+    ccr_infraexonic = dict()
+    # Counter subexonic circRNAs:
+    nb_infraexonic, nb_infraexonic_tot, nb_infraexonic_sens, nb_infraexonic_antisens = 0, 0, 0, 0
+
+    for index, row in df.iterrows():
+        if row.nb_ccr >= 5: 
+            if ((len(row.gene_id_ife) > 0) and (row.circ_rna_name not in monoexonic_circ_names)):
+                if (("_5_c_+" not in row.exons_id_start) and ("_5_lnc_+" not in row.exons_id_start) and
+                    ("_3_c_-" not in row.exons_id_start) and ("_3_lnc_-" not in row.exons_id_start) and 
+                    ("_3_c_+" not in row.exons_id_end) and ("_3_lnc_+" not in row.exons_id_end) and 
+                    ("_5_c_-" not in row.exons_id_end) and ("_5_lnc_-" not in row.exons_id_end)): 
+                    if len(row.gene_id_start) == 0 and len(row.gene_id_end) == 0:
+                        nb_infraexonic_tot += 1
+                        infraexonic_tot_names.append(row.circ_rna_name)
+                        if row.circ_rna_name not in intronic_circ_names:
+                            if row.strand == "+":
+                                if "+" in row.gene_id_ife:
+                                    nb_infraexonic_sens += 1
+                                    subexonic.append(row)
+                                    ccr_infraexonic[row.circ_rna_name] = row.nb_ccr
+                                    infraexonic_circ_names.append(row.circ_rna_name)
+                                elif "-" in row.gene_id_ife:
+                                    nb_infraexonic_antisens += 1
+                            elif row.strand == "-":
+                                if "-" in row.gene_id_ife:
+                                    nb_infraexonic_sens += 1
+                                    subexonic.append(row)
+                                    infraexonic_circ_names.append(row.circ_rna_name)
+                                    ccr_infraexonic[row.circ_rna_name] = row.nb_ccr
+                                elif "+" in row.gene_id_ife:
+                                    nb_infraexonic_antisens += 1
+                    elif ((len(row.gene_id_start) > 0 and len(row.gene_id_end) == 0) or 
+                            (len(row.gene_id_start) == 0  and len(row.gene_id_end) > 0)):
+                        nb_infraexonic_tot += 1
+                        infraexonic_tot_names.append(row.circ_rna_name)
+                        if row.circ_rna_name not in intronic_circ_names:
+                            if row.strand == "+":
+                                if "+" in row.gene_id_ife:
+                                    nb_infraexonic_sens += 1
+                                    subexonic.append(row)
+                                    infraexonic_circ_names.append(row.circ_rna_name)
+                                    ccr_infraexonic[row.circ_rna_name] = row.nb_ccr
+                                elif "-" in row.gene_id_ife:
+                                    nb_infraexonic_antisens += 1
+                            elif row.strand == "-":
+                                if "-" in row.gene_id_ife:
+                                    nb_infraexonic_sens += 1
+                                    subexonic.append(row)
+                                    infraexonic_circ_names.append(row.circ_rna_name)
+                                    ccr_infraexonic[row.circ_rna_name] = row.nb_ccr
+                                elif "+" in row.gene_id_ife:
+                                    nb_infraexonic_antisens += 1
+    return subexonic, infraexonic_circ_names, nb_infraexonic_sens, ccr_infraexonic
+
 
 def get_circrnas(df):
     """ Read the annotation_circRNA.out dataframe and return all statistics to tabular 
-        format about circRNAs"""
-    monoexonic_circ_names = get_exonic_circrnas[5]
-    intronic_circ_names = get_intronic_circrnas[3]
-    for index, row in df.iterrows():
-        if row.nb_ccr >= 5:                    
-            # Exonic circRNAs:
-            stats_exonic_circrnas = get_exonic_circrnas(row)      
-            # Subexonic circRNAs: 
-            stats_subexonic_circrnas = get_subexonic_circrnas(row, monoexonic_circ_names, intronic_circ_names)            
-            # Intronic circRNAs: 
-            stats_intronic_circrnas = get_intronic_circrnas(row) 
-    # Get circRNAs:
-    true_exonic = stats_exonic_circrnas[0]
+        format about circRNAs"""               
+    # Get exonic circRNAs:
+    stats_exonic_circrnas = get_exonic_circrnas(df)
+    exonic = stats_exonic_circrnas[0]
+    monoexonic_names = stats_exonic_circrnas[5]
+    # Get intronic circRNAs: 
+    stats_intronic_circrnas = get_intronic_circrnas(df)
+    intronic = stats_intronic_circrnas[0]
+    intronic_names = stats_intronic_circrnas[3]
+    # Get subexonic circRNAs: 
+    stats_subexonic_circrnas = get_subexonic_circrnas(df, monoexonic_names, intronic_names)            
     subexonic = stats_subexonic_circrnas[0]
-    true_intronic = stats_intronic_circrnas[0]
-    return true_exonic, subexonic, true_intronic
-    
-def get_stats_circrnas(sample, df):
+  
+    return exonic, subexonic, intronic
+
+
+def get_stats_circrnas(sample, df, output_file_name):
     """ Read the annotation_circRNA.out dataframe and return all statistics to tabular 
         format about circRNAs"""
-    monoexonic_circ_names = get_exonic_circrnas[5]
-    intronic_circ_names = get_intronic_circrnas[3]
-
-    for index, row in df.iterrows():
-        if row.nb_ccr >= 5:
-            nb_circ_tot = len(df)                        
-            # Exonic circRNAs:
-            stats_exonic_circrnas = get_exonic_circrnas(row)      
-            # Subexonic circRNAs: 
-            stats_subexonic_circrnas = get_subexonic_circrnas(row, monoexonic_circ_names, intronic_circ_names)            
-            # Intronic circRNAs: 
-            stats_intronic_circrnas = get_intronic_circrnas(row) 
+    nb_circ_tot = len(df)  
+    # Get circRNAs:
+    exonic = get_circrnas(df)[0]    
+    subexonic = get_circrnas(df)[1]
+    intronic = get_circrnas(df)[2]
 
     # Get exonic circRNAs stats:
-    true_exonic = stats_exonic_circrnas[0]
-    stats_exonic = write_comparison_exonic_table(sample, true_exonic, output_file_name)
+    stats_exonic = write_comparison_exonic_table(sample, exonic, output_file_name)
     
     # Get subexonic circRNAs stats:
-    subexonic = stats_subexonic_circrnas[0]
-    nb_subexonic = write_subexonic_tables(sample, subexonic, args.output_subexonic_meg_file)[0]
-    nb_gene_subexonic = write_subexonic_tables(sample, subexonic, args.output_subexonic_meg_file)[1]
+    nb_subexonic = write_subexonic_tables(sample, subexonic, args.output_subexonic_meg_file, 
+                                          args.output_subexonic_pleg_file)[0]
+    nb_gene_subexonic = write_subexonic_tables(sample, subexonic, args.output_subexonic_meg_file, 
+                                               args.output_subexonic_pleg_file)[1]
 
     if len(stats_exonic) > 5:
         nb_c = stats_exonic[0]
@@ -230,14 +232,26 @@ def get_stats_circrnas(sample, df):
         nb_autres = stats_exonic[2]
         nb_start_end_exonic_selected = stats_exonic[3]
         nb_ccr_start_end_exonic = stats_exonic[4]
-        nb_exonic = write_subexonic_tables(sample, true_exonic, args.output_comp_exonic_file)[5]
+        nb_exonic = write_comparison_exonic_table(sample, exonic, args.output_comp_exonic_file)[5]
     else:
         nb_c = stats_exonic[0] 
         nb_lnc = 0 
         nb_autres = stats_exonic[1]
         nb_start_end_exonic_selected = stats_exonic[2]
         nb_ccr_start_end_exonic = stats_exonic[3]
-        nb_exonic = write_subexonic_tables(sample, true_exonic, args.output_comp_exonic_file)[4]
+        nb_exonic = write_comparison_exonic_table(sample, exonic, args.output_comp_exonic_file)[4]
+
+    nb_start_end_exonic = get_exonic_circrnas(df)[1]
+    nb_single_annotated_junction = get_exonic_circrnas(df)[2]
+    monoexonic_circ_names =  get_exonic_circrnas(df)[5]
+    intronic_circ_names = get_intronic_circrnas(df)[3]
+    infraexonic_circ_names = get_subexonic_circrnas(df, monoexonic_circ_names, intronic_circ_names)[1]
+    single_end_circ_names = get_exonic_circrnas(df)[3]
+    nb_infraexonic_sens = get_subexonic_circrnas(df, monoexonic_circ_names, intronic_circ_names)[2]
+    nb_true_intronic = get_intronic_circrnas(df)[1]
+    ccr_single_annot = get_exonic_circrnas(df)[4]
+    ccr_true_intronic = get_intronic_circrnas(df)[2]
+    ccr_infraexonic = get_subexonic_circrnas(df, monoexonic_circ_names, intronic_circ_names)[3]
 
     nb_start_end_false_exonic = nb_start_end_exonic - nb_start_end_exonic_selected
     nb_tot_exonic = nb_start_end_exonic + nb_single_annotated_junction
@@ -251,9 +265,11 @@ def get_stats_circrnas(sample, df):
     return "\t".join(map(str,[sample, nb_circ_tot, nb_exonic, nb_lnc, nb_autres, 
                               nb_subexonic, nb_gene_subexonic, nb_true_intronic]))+"\n"
 
+
 def write_stats_table(stats, output_file):
     with open(output_file, "w") as fout:
         fout.write(stats)
+
 
 def write_circ_table(self, header, path, index=None, sep="\t", na_rep='', float_format=None,
                      index_label=None, mode='w', encoding=None, date_format=None, decimal='.'):
@@ -268,7 +284,8 @@ def write_circ_table(self, header, path, index=None, sep="\t", na_rep='', float_
                        date_format=date_format, decimal=decimal)
     if path is None:
         return result
-        
+
+       
 def write_comparison_exonic_table(sample, circ_rnas, output_file_name):
     # Write exonic table for comparaison between tissues/species:
     df_circ_rnas = pd.DataFrame(circ_rnas, index=None)
@@ -327,7 +344,8 @@ def write_comparison_exonic_table(sample, circ_rnas, output_file_name):
             return d["c"], d["lnc"], d["autres"], nb_start_end_annotated, nb_ccr_exonic, nb_exonic
         elif ("c" in d.keys() and "lnc" not in d.keys()):
             return d["c"], d["autres"], nb_start_end_annotated, nb_ccr_exonic, nb_exonic
-                
+
+
 def write_subexonic_tables(sample, circ_rnas, output_file_name_meg, output_file_name_pleg): 
     # Write exonic table for comparaison between tissues/species:
     df_circ_rnas = pd.DataFrame(circ_rnas, index=None)
@@ -362,10 +380,10 @@ def write_subexonic_tables(sample, circ_rnas, output_file_name_meg, output_file_
                     s = row
                     tsv_writer_meg.writerow(s)
                     # Subexonic pleg circRNAs:
-                    if biotype != "rRNA":     
-                        nb_sub_exonic += 1
-                        s = row
-                        tsv_writer_pleg.writerow(s)
+                elif biotype != "c" and biotype != "lnc" and biotype != "pseudo" and biotype != "rRNA":     
+                    nb_sub_exonic += 1
+                    s = row
+                    tsv_writer_pleg.writerow(s)
             # Subexonic meg circRNAs:
             elif len(biotype)>1:
                 if (("c" and "lnc" not in biotype) and ("c" and "pseudo" not in biotype)
@@ -375,14 +393,16 @@ def write_subexonic_tables(sample, circ_rnas, output_file_name_meg, output_file_
                     s = row
                     tsv_writer_meg.writerow(s)
                     # Subexonic pleg circRNAs:
-                    if "rRNA" not in biotype:                 
-                        biotype = ",".join(biotype)  
-                        nb_sub_exonic += 1           
-                        s = row
-                        tsv_writer_pleg.writerow(s)     
+                elif (("c" and "lnc" not in biotype) and ("c" and "pseudo" not in biotype)
+                    and ("lnc" and "pseudo" not in biotype)) and "rRNA" not in biotype:                 
+                    biotype = ",".join(biotype)  
+                    nb_sub_exonic += 1           
+                    s = row
+                    tsv_writer_pleg.writerow(s)     
 
     nb_subexonic_genes = len(list(set([val for sublist in subexonic_genes for val in sublist])))
     return nb_sub_exonic, nb_subexonic_genes
+
 
 def write_circrnas_tables(sample, df, exonic_circrnas, intronic_circrnas, subexonic_circrnas):  
     header = list(df.columns.values.tolist())    
@@ -408,11 +428,11 @@ def main():
     intronic_circrnas = get_circrnas(df_circ_annot)[2]
 
     # Write exonic, intronic and subexonic circRNAs tables:
-    circrnas_tables = write_circrnas_tables(sample, exonic_circrnas, subexonic_circrnas, 
-                                            intronic_circrnas)
+    circrnas_tables = write_circrnas_tables(sample, df_circ_annot, exonic_circrnas, 
+                                            intronic_circrnas, subexonic_circrnas)
 
     # Compute statistics about exonic, subexonic and intronic circRNAs:
-    stats = get_stats_circrnas(sample, df_circ_annot)
+    stats = get_stats_circrnas(sample, df_circ_annot, args.output_comp_exonic_file)
 
     # Write the circRNAs statistics table:
     write_stats_table(stats, args.output_stats_file)   
