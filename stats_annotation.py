@@ -367,40 +367,49 @@ def write_subexonic_tables(sample, circ_rnas, output_file_name_meg, output_file_
             genes_id = list(set(list(row.gene_id_ife.split(","))))
             genes_id = list(i.split("_") for i in genes_id)
             gene_id = list(set(list(i[0] for i in genes_id)))
-            subexonic_genes.append(gene_id) 
-            gene_id = ",".join(gene_id)               
-            # Get biotype:  
-            biotype = list(set(list(i[2] for i in genes_id)))
-            
-            # Subexonic meg circRNAs:
-            if len(biotype)==1: 
-                biotype = ",".join(biotype)
-                if biotype != "c" and biotype != "lnc" and biotype != "pseudo":     
-                    nb_sub_exonic += 1
-                    s = row
-                    tsv_writer_meg.writerow(s)
-                    # Subexonic pleg circRNAs:
-                elif biotype != "c" and biotype != "lnc" and biotype != "pseudo" and biotype != "rRNA":     
-                    nb_sub_exonic += 1
-                    s = row
-                    tsv_writer_pleg.writerow(s)
-            # Subexonic meg circRNAs:
-            elif len(biotype)>1:
-                if (("c" and "lnc" not in biotype) and ("c" and "pseudo" not in biotype)
-                    and ("lnc" and "pseudo" not in biotype)):                 
-                    biotype = ",".join(biotype)  
-                    nb_sub_exonic += 1           
-                    s = row
-                    tsv_writer_meg.writerow(s)
-                    # Subexonic pleg circRNAs:
-                elif (("c" and "lnc" not in biotype) and ("c" and "pseudo" not in biotype)
-                    and ("lnc" and "pseudo" not in biotype)) and "rRNA" not in biotype:                 
-                    biotype = ",".join(biotype)  
-                    nb_sub_exonic += 1           
-                    s = row
-                    tsv_writer_pleg.writerow(s)     
+            subexonic_genes.append(gene_id)
+            gene_id = ",".join(gene_id)  
+            biotypes = []
 
-    nb_subexonic_genes = len(list(set([val for sublist in subexonic_genes for val in sublist])))
+            if len(genes_id)==1: 
+                for i in genes_id:
+                    # Subexonic pleg circRNAs:       
+                    if 'c' in i or 'lnc' in i or 'pseudo' in i:
+                        nb_sub_exonic += 1
+                        s = row
+                        tsv_writer_pleg.writerow(s)
+                    # Subexonic meg circRNAs:
+                    elif 'c' not in i and 'lnc' not in i and 'pseudo' not in i and 'rRNA' not in i:
+                        nb_sub_exonic += 1
+                        s = row
+                        tsv_writer_meg.writerow(s)
+                    elif 'rRNA' in i:
+                        pass
+            
+            if len(genes_id) > 1:
+                for i in genes_id:
+                    if len(i) == 3:
+                        biotypes.append(i[2])        
+                        biotypes = list(set(biotypes))
+                    elif len(i) > 3:
+                        p_biotypes = [i[2],i[3]]
+                        biotypes = [p for p in p_biotypes]
+                if 'rRNA' in biotypes:
+                    pass
+                # Subexonic pleg circRNAs:
+                elif (biotypes == ['c'] or biotypes == ['lnc'] or biotypes == ['pseudo'] 
+                    or ('c' and 'pseudo' in biotypes) or ('c' and 'lnc' in biotypes)
+                    or ('lnc' and 'pseudo' in biotypes)):
+                    nb_sub_exonic += 1
+                    s = row
+                    tsv_writer_pleg.writerow(s) 
+                # Subexonic meg circRNAs:
+                else:
+                    nb_sub_exonic += 1
+                    s = row
+                    tsv_writer_meg.writerow(s)
+
+    nb_subexonic_genes = len(list(set([val for sublist in subexonic_genes for val in sublist]))) 
     return nb_sub_exonic, nb_subexonic_genes
 
 
