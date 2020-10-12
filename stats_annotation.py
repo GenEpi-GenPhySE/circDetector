@@ -133,8 +133,10 @@ def get_intronic_circrnas(df):
 
 
 def get_subexonic_circrnas(df, monoexonic_circ_names, intronic_circ_names):
+    # Subexonic_meg : sens + antisens
+    # Subexonic_pleg : sens
     # Arrays, dicts:
-    infraexonic_tot_names, infraexonic_circ_names, subexonic = [], [], []
+    infraexonic_tot_names, infraexonic_circ_names, subexonic, subexonic_antisens_names = [], [], [], []
     ccr_infraexonic = dict()
     # Counter subexonic circRNAs:
     nb_infraexonic, nb_infraexonic_tot, nb_infraexonic_sens, nb_infraexonic_antisens = 0, 0, 0, 0
@@ -158,6 +160,9 @@ def get_subexonic_circrnas(df, monoexonic_circ_names, intronic_circ_names):
                                     infraexonic_circ_names.append(row.circ_rna_name)
                                 elif "-" in row.gene_id_ife:
                                     nb_infraexonic_antisens += 1
+                                    subexonic.append(row)
+                                    infraexonic_circ_names.append(row.circ_rna_name)
+                                    subexonic_antisens_names.append(row.circ_rna_name)
                             elif row.strand == "-":
                                 if "-" in row.gene_id_ife:
                                     nb_infraexonic_sens += 1
@@ -166,6 +171,9 @@ def get_subexonic_circrnas(df, monoexonic_circ_names, intronic_circ_names):
                                     ccr_infraexonic[row.circ_rna_name] = row.nb_ccr
                                 elif "+" in row.gene_id_ife:
                                     nb_infraexonic_antisens += 1
+                                    subexonic.append(row)
+                                    infraexonic_circ_names.append(row.circ_rna_name)
+                                    subexonic_antisens_names.append(row.circ_rna_name)
                     elif ((len(row.gene_id_start) > 0 and len(row.gene_id_end) == 0) or 
                             (len(row.gene_id_start) == 0  and len(row.gene_id_end) > 0)):
                         nb_infraexonic_tot += 1
@@ -179,6 +187,9 @@ def get_subexonic_circrnas(df, monoexonic_circ_names, intronic_circ_names):
                                     ccr_infraexonic[row.circ_rna_name] = row.nb_ccr
                                 elif "-" in row.gene_id_ife:
                                     nb_infraexonic_antisens += 1
+                                    subexonic.append(row)
+                                    infraexonic_circ_names.append(row.circ_rna_name)
+                                    subexonic_antisens_names.append(row.circ_rna_name)
                             elif row.strand == "-":
                                 if "-" in row.gene_id_ife:
                                     nb_infraexonic_sens += 1
@@ -187,7 +198,10 @@ def get_subexonic_circrnas(df, monoexonic_circ_names, intronic_circ_names):
                                     ccr_infraexonic[row.circ_rna_name] = row.nb_ccr
                                 elif "+" in row.gene_id_ife:
                                     nb_infraexonic_antisens += 1
-    return subexonic, infraexonic_circ_names, nb_infraexonic_sens, ccr_infraexonic
+                                    subexonic.append(row)
+                                    infraexonic_circ_names.append(row.circ_rna_name)
+                                    subexonic_antisens_names.append(row.circ_rna_name)
+    return subexonic, infraexonic_circ_names, nb_infraexonic_sens, ccr_infraexonic, subexonic_antisens_names
 
 
 def get_circrnas(df):
@@ -204,8 +218,9 @@ def get_circrnas(df):
     # Get subexonic circRNAs: 
     stats_subexonic_circrnas = get_subexonic_circrnas(df, monoexonic_names, intronic_names)            
     subexonic = stats_subexonic_circrnas[0]
+    subexonic_antisens = stats_subexonic_circrnas[4]
   
-    return exonic, subexonic, intronic
+    return exonic, subexonic, intronic, subexonic_antisens 
 
 
 def get_stats_circrnas(sample, df, output_file_name):
@@ -215,15 +230,16 @@ def get_stats_circrnas(sample, df, output_file_name):
     # Get circRNAs:
     exonic = get_circrnas(df)[0]    
     subexonic = get_circrnas(df)[1]
+    subexonic_antisens = get_circrnas(df)[3]
     intronic = get_circrnas(df)[2]
-
+    
     # Get exonic circRNAs stats:
     stats_exonic = write_comparison_exonic_table(sample, exonic, output_file_name)
     
     # Get subexonic circRNAs stats:
-    nb_subexonic = write_subexonic_tables(sample, subexonic, args.output_subexonic_meg_file, 
+    nb_subexonic = write_subexonic_tables(sample, subexonic, subexonic_antisens, args.output_subexonic_meg_file, 
                                           args.output_subexonic_pleg_file)[0]
-    nb_gene_subexonic = write_subexonic_tables(sample, subexonic, args.output_subexonic_meg_file, 
+    nb_gene_subexonic = write_subexonic_tables(sample, subexonic, subexonic_antisens, args.output_subexonic_meg_file, 
                                                args.output_subexonic_pleg_file)[1]
 
     if len(stats_exonic) > 5:
@@ -346,12 +362,40 @@ def write_comparison_exonic_table(sample, circ_rnas, output_file_name):
             return d["c"], d["autres"], nb_start_end_annotated, nb_ccr_exonic, nb_exonic
 
 
-def write_subexonic_tables(sample, circ_rnas, output_file_name_meg, output_file_name_pleg): 
+def compute_size(exons_start_end):
+    pos_start_end = list(exons_start_end.split("_")) 
+    pos_start = int(pos_start_end[0])
+    pos_end = int(pos_start_end[1])
+    size = pos_end - pos_start
+    return size 
+
+def get_true_exons_gene_id(exons_start_end, exons_id, gene_id):
+    if len(exons_start_end)==1:
+        exon_start_end = ",".join(exons_start_end)
+        exon_id = ",".join(exons_id)
+        gene_id = gene_id
+    else:
+        annot = dict(zip(exons_start_end, exons_id))
+        sizes = []
+        for key in annot:
+            size = compute_size(key)
+            sizes.append(size)
+        values = zip(exons_start_end, sizes)
+        annot_f = dict(zip(exons_id, values))
+        min_size = min([i[1] for i in list(annot_f.values())])
+        for key, values in annot_f.items():
+            if values[1] == min_size:
+                exon_id = key
+                exon_start_end = values[0]
+    return exon_start_end, exon_id, gene_id
+
+
+def write_subexonic_tables(sample, circ_rnas, subexonic_antisens, output_file_name_meg, output_file_name_pleg): 
     # Write exonic table for comparaison between tissues/species:
     df_circ_rnas = pd.DataFrame(circ_rnas, index=None)
-    header = list(df_circ_rnas.columns.values.tolist())
     nb_sub_exonic = 0
     subexonic_genes = []
+    header = list(df_circ_rnas.columns.values.tolist())
   
     with open(output_file_name_meg, 'w') as fout_meg, open(output_file_name_pleg, 'w') as fout_pleg:
         # Subexonic pleg circRNAs:
@@ -366,15 +410,23 @@ def write_subexonic_tables(sample, circ_rnas, output_file_name_meg, output_file_
             # Get gene_id:
             genes_id = list(set(list(row.gene_id_ife.split(","))))
             genes_id = list(i.split("_") for i in genes_id)
-            gene_id = list(set(list(i[0] for i in genes_id)))
-            subexonic_genes.append(gene_id)
-            gene_id = ",".join(gene_id)  
+            exons_start_end = sorted(set(row.exons_start_end_ife.split(",")), key=row.exons_start_end_ife.split(',').index)
+            exon_id = sorted(set(row.exon_id_ife.split(",")), key=row.exon_id_ife.split(',').index)
+            gene_id = ",".join(list(set(list(row.gene_id_ife.split(",")))))
             biotypes = []
+
+            exon_start_end = get_true_exons_gene_id(exons_start_end, exon_id, gene_id)[0]
+            exon_id = get_true_exons_gene_id(exons_start_end, exon_id, gene_id)[1]
+            gene_id = get_true_exons_gene_id(exons_start_end, exon_id, gene_id)[2]
+
+            row.exons_start_end_ife = exon_start_end
+            row.exon_id_ife = exon_id
+            row.gene_id_ife = gene_id
 
             if len(genes_id)==1: 
                 for i in genes_id:
                     # Subexonic pleg circRNAs:       
-                    if 'c' in i or 'lnc' in i or 'pseudo' in i:
+                    if ('c' in i or 'lnc' in i or 'pseudo' in i) and (row.circ_rna_name not in subexonic_antisens):
                         nb_sub_exonic += 1
                         s = row
                         tsv_writer_pleg.writerow(s)
@@ -397,9 +449,9 @@ def write_subexonic_tables(sample, circ_rnas, output_file_name_meg, output_file_
                 if 'rRNA' in biotypes:
                     pass
                 # Subexonic pleg circRNAs:
-                elif (biotypes == ['c'] or biotypes == ['lnc'] or biotypes == ['pseudo'] 
+                elif ((biotypes == ['c'] or biotypes == ['lnc'] or biotypes == ['pseudo'] 
                     or ('c' and 'pseudo' in biotypes) or ('c' and 'lnc' in biotypes)
-                    or ('lnc' and 'pseudo' in biotypes)):
+                    or ('lnc' and 'pseudo' in biotypes)) and (row.circ_rna_name not in subexonic_antisens)):
                     nb_sub_exonic += 1
                     s = row
                     tsv_writer_pleg.writerow(s) 
@@ -413,14 +465,14 @@ def write_subexonic_tables(sample, circ_rnas, output_file_name_meg, output_file_
     return nb_sub_exonic, nb_subexonic_genes
 
 
-def write_circrnas_tables(sample, df, exonic_circrnas, intronic_circrnas, subexonic_circrnas):  
+def write_circrnas_tables(sample, df, exonic_circrnas, intronic_circrnas, subexonic_circrnas, subexonic_antisens):  
     header = list(df.columns.values.tolist())    
     # Write the exonic circRNAs table:
     write_circ_table(exonic_circrnas, header, args.output_exonic_file)
     # Write the intronic circRNAs table:
     write_circ_table(intronic_circrnas, header, args.output_intronic_file)
     # Write the subexonic circRNAs tables:
-    write_subexonic_tables(sample, subexonic_circrnas, args.output_subexonic_meg_file, 
+    write_subexonic_tables(sample, subexonic_circrnas, subexonic_antisens, args.output_subexonic_meg_file, 
                            args.output_subexonic_pleg_file)
 
 
@@ -435,10 +487,11 @@ def main():
     exonic_circrnas = get_circrnas(df_circ_annot)[0]
     subexonic_circrnas = get_circrnas(df_circ_annot)[1]
     intronic_circrnas = get_circrnas(df_circ_annot)[2]
+    subexonic_antisens = get_circrnas(df_circ_annot)[3]
 
     # Write exonic, intronic and subexonic circRNAs tables:
     circrnas_tables = write_circrnas_tables(sample, df_circ_annot, exonic_circrnas, 
-                                            intronic_circrnas, subexonic_circrnas)
+                                            intronic_circrnas, subexonic_circrnas, subexonic_antisens)
 
     # Compute statistics about exonic, subexonic and intronic circRNAs:
     stats = get_stats_circrnas(sample, df_circ_annot, args.output_comp_exonic_file)
@@ -468,7 +521,7 @@ def parse_arguments():
                         help='Table containing subexonic circRNAs')        
     parser.add_argument('-osemeg', '--output_subexonic_meg_file', required=False, 
                         default="subexonic_meg_circRNAs.tsv",
-                        help='Table containing subexonic circRNAs')           
+                        help='Table containing subexonic circRNAs')       
     args = parser.parse_args()
     return args
 

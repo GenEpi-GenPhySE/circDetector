@@ -46,24 +46,27 @@ rule all:
         expand("{sample}/true_intronic_circRNAs.tsv", sample=samples),
         expand("{sample}/true_exonic_circRNAs.tsv", sample=samples),
         expand("{sample}/true_exonic_comparison.tsv", sample=samples),
-        expand("{sample}/true_intronic_comparison.tsv", sample=samples),
-	    "mapping_stat.tsv",
+        expand("{sample}/subexonic_pleg_circRNAs.tsv", sample=samples),
+        expand("{sample}/subexonic_meg_circRNAs.tsv", sample=samples),
+        "mapping_stat.tsv",
         "stats_annotation_all.tsv",
-	    "exonic_comparison_all.tsv",
-        "notebook.done", 
-        "notebook_exonic.done"
-   #    "notebook_tissuesspecificity.done"
-       
+        "exonic_comparison_all.tsv",
+        "notebook.done",
+        "cirRNAcounts_cow_exonic.tsv",
+        "cirRNAcounts_pig_exonic.tsv"
+      
 
 rule formatcountmatrixexonic:
     input:
-	    config["samples"]
+        config["samples"]
     output:
-	    touch("notebook_exonic.done")
+        "cirRNAcounts_cow_exonic.tsv",
+        "cirRNAcounts_pig_exonic.tsv"
     log:
-	    notebook = "logs/notebooks/FormatCountMatrixExonic.ipynb"
+        notebook = "logs/notebooks/FormatCountMatrixExonic.ipynb"
     notebook:
         "notebooks/FormatCountMatrixExonic.ipynb"
+    
         
 rule formatcountmatrix:
     input:
@@ -76,24 +79,15 @@ rule formatcountmatrix:
     notebook:
         "notebooks/FormatCountMatrix.ipynb"
 
-# rule tissuesspecificity:
-#     input:
-#         "cirRNAcounts.tsv"
-#     output:
-#         touch("notebook_tissuesspecificity.done")
-#     log:
-#         # optional path to the processed notebook
-#         notebook = "logs/notebooks/TissueSpecificity.ipynb"
-#     notebook:
-#         "notebooks/TissueSpecificity.ipynb"
 
 rule mergeexoniccomparison:
     input:
-	    expand("{sample}/true_exonic_comparison.tsv", sample=samples)
+        expand("{sample}/true_exonic_comparison.tsv", sample=samples)
     output:
-	    "exonic_comparison_all.tsv"
+        "exonic_comparison_all.tsv"
     shell:
- 	    "cat {{cow,pig}}-*/true_exonic_comparison.tsv | cut -f1,3,4 |tail -n+2|sort|uniq > {output}" 
+         "cat {{cow,pig}}-*/true_exonic_comparison.tsv | cut -f1,3,4 |tail -n+2|sort|uniq > {output}" 
+
 
 rule mergestatannotation:
     input:
@@ -112,13 +106,16 @@ rule statannotation:
         intronic = "{sample}/true_intronic_circRNAs.tsv",
         exonic = "{sample}/true_exonic_circRNAs.tsv",
         comp_exonic = "{sample}/true_exonic_comparison.tsv",
-        comp_intronic = "{sample}/true_intronic_comparison.tsv"
+        sub_exonic_pleg = "{sample}/subexonic_pleg_circRNAs.tsv",
+        sub_exonic_meg = "{sample}/subexonic_meg_circRNAs.tsv"
+
     log:
         stdout = "logs/{sample}_stat_annotation.o",
         stderr = "logs/{sample}_stat_annotation.e"
     shell:
         "python3 ../scripts/stats_annotation.py -i {input} -o_stats {output.stats}"
-        " -oi {output.intronic} -oe {output.exonic} -oce {output.comp_exonic} -oci {output.comp_intronic}"
+        " -oi {output.intronic} -oe {output.exonic} -oce {output.comp_exonic} -osepleg {output.sub_exonic_pleg}"
+        " -osemeg {output.sub_exonic_meg}"
         " 1>{log.stdout} 2>{log.stderr}"
 
 
