@@ -270,6 +270,9 @@ class CircRNA(Annotation):
     def nb_distinct(self):
         return self.get_att("nb_distinct")
 
+    def _get_score(self):
+        return self.nb_ccr
+
 
     def _init_default(self, chrom, start, end, strand, feature, attributes,
                       source, name):
