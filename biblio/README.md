@@ -11,8 +11,19 @@
  - Expression Landscape of circRNAs in Arabidopsis thaliana Seedlings and Adult Tissues Frontiers in Plant Science 2020  
   https://www.frontiersin.org/articles/10.3389/fpls.2020.576581
   
+  
+  3 articles analyzing same datasets (1X50bp)
  - Rat BodyMap transcriptomes reveal unique circular RNA features across tissue types and developmental stages RNA 2018  
   https://rnajournal.cshlp.org/content/24/11/1443
+  
+  - Circular RNAs are temporospatially regulated throughout development and ageing in the rat  Sci reports 2019
+  https://www.nature.com/articles/s41598-019-38860-9
+  
+ -Landscape of circRNAs Across 11 Organs and 4 Ages in Fischer 344 Rats   Chem Res Toxicol 2020   
+  https://pubs.acs.org/doi/10.1021/acs.chemrestox.0c00144
+  
+  
+  
  
 #### Quantification
  - Accurate quantification of circular RNAs identifies extensive circular isoform switching events Nature 2020  
