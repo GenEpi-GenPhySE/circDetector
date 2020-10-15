@@ -25,24 +25,24 @@
   
 #### multi-espèces
  
-1. 	CircAtlas: an integrated resource of one million highly accurate circular RNAs from 1070 vertebrate transcriptomes. 
-Wu W, Ji P, Zhao F.
-Genome Biol. 2020 Apr 28;21(1):101. doi: 10.1186/s13059-020-02018-y.
-PMID: 32345360 Free PMC article. 
-
-2. 	Increased complexity of circRNA expression during species evolution. 
-Dong R, Ma XK, Chen LL, Yang L.
-RNA Biol. 2017 Aug 3;14(8):1064-1074. doi: 10.1080/15476286.2016.1269999. Epub 2016 Dec 16.
-PMID: 27982734 Free PMC article. 
+1. 	CircAtlas: an integrated resource of one million highly accurate circular RNAs from 1070 vertebrate transcriptomes.     
+Wu W, Ji P, Zhao F.Genome Biol. 2020 Apr 28;21(1):101.     
+https://genomebiology.biomedcentral.com/articles/10.1186/s13059-020-02018-y.   
+ 
+2. 	Increased complexity of circRNA expression during species evolution.    
+Dong R, Ma XK, Chen LL, Yang L.RNA Biol. 2017 Aug 3;14(8):1064-1074.    
+https://www.tandfonline.com/doi/full/10.1080/15476286.2016.1269999   
+ 
 3. 	Expanded Expression Landscape and Prioritization of Circular RNAs in Mammals. 
 Ji P, Wu W, Chen S, Zheng Y, Zhou L, Zhang J, Cheng H, Yan J, Zhang S, Yang P, Zhao F.
-Cell Rep. 2019 Mar 19;26(12):3444-3460.e5. doi: 10.1016/j.celrep.2019.02.078.
-PMID: 30893614 
+Cell Rep. 2019 Mar 19;26(12):3444-3460.e5.   
+https://www.sciencedirect.com/science/article/pii/S2211124719302645?via%3Dihub
 
 4. 	Characterization of circular RNAs in human, mouse and rat hearts. 
 Werfel S, Nothjunge S, Schwarzmayr T, Strom TM, Meitinger T, Engelhardt S.
-J Mol Cell Cardiol. 2016 Sep;98:103-7. doi: 10.1016/j.yjmcc.2016.07.007. Epub 2016 Jul 28.
-PMID: 27476877 
+J Mol Cell Cardiol. 2016 Sep;98:103-7.    
+https://www.sciencedirect.com/science/article/pii/S0022282816302292?via%3Dihub
+
 
  
 #### Quantification
