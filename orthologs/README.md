@@ -31,6 +31,7 @@ awk '{print $1,$2}' bta_aor_one2one_ortholog_genes.txt > bta_aor_one2one_ortholo
 ```
 
 ## Sort by gene_id:
+- **head :** gene_ID_[bta/ssc/oar] | gene_ID_[bta/ssc/oar]
 ```
 awk 'NR == 1; NR > 1 {print $0 | "sort -n"}' ssc_bta_one2one_ortholog_genes.tsv > ssc_bta_one2one_ortholog_genes_sort.tsv
 awk 'NR == 1; NR > 1 {print $0 | "sort -n"}' ssc_oar_one2one_ortholog_genes.tsv >  ssc_oar_one2one_ortholog_genes_sort.tsv
