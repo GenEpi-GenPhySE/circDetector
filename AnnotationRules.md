@@ -58,8 +58,7 @@
      
     [Class-3] (circRNAs mapped inside a single exon) 
        The circRNA is mapped inside an exon of a described gene      
-         AND  
-       The strand of the circRNA is identical to the strand of the gene
+       
 
 
 ####     Class: Exonic   
