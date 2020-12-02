@@ -22,6 +22,12 @@
   - Landscape of circRNAs Across 11 Organs and 4 Ages in Fischer 344 Rats -- Chem Res Toxicol 2020       
   https://pubs.acs.org/doi/10.1021/acs.chemrestox.0c00144
   
+  Linear vs circular expression
+  - Selective release of circRNAs in platelet-derived extracellular vesicles -- Journal of Extracellular Vesicles, Volume 7, 2018 - Issue 1
+  https://www.tandfonline.com/doi/full/10.1080/20013078.2018.1424473
+  
+  - 
+  
   
 #### multi-espèces
  
