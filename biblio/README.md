@@ -26,8 +26,13 @@
   - Selective release of circRNAs in platelet-derived extracellular vesicles -- Journal of Extracellular Vesicles, Volume 7, 2018 - Issue 1
   https://www.tandfonline.com/doi/full/10.1080/20013078.2018.1424473
   
-  - 
+  - Expression dynamics, relationships, and transcriptional regulations of diverse transcripts in mouse spermatogenic cells
+  https://www.tandfonline.com/doi/full/10.1080/15476286.2016.1218588
   
+  - Cell-Type Specific Features of Circular RNA Expression
+  https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1003777
+
+ 
   
 #### multi-espèces
  
