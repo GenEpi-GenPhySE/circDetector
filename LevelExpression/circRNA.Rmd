@@ -1,0 +1,128 @@
+---
+title: "circRNAs"
+author: ""
+date: "14/12/2020"
+output: 
+  html_document: 
+      toc: TRUE
+      toc_float: TRUE
+      code_folding: hide
+  pdf_document:
+      keep_tex: TRUE
+---
+
+
+**Données :**
+
+Les trois fichiers de comptage :
+
+  - **total RNAseq :** *sus_scrofa_linear_counts.tsv*
+  - **mRNAseq :** *raffine.gnexpr.readcount.matrix.tsv*
+  - **circRNA :** *sus_scrofa_bsj_gene_counts.tsv* => utilisé simplement pour identifier les gènes produisant des circRNAs
+
+**3 échantillons :**
+
+  - *ssc_testis_1* (FR22JFZ201100831) : animal 31
+  - *ssc_testis_2* (FR62ND6201203305) : animal 05
+  - *ssc_testis_3* (FR79JCW201106154) : animal 54
+
+**Consignes :**
+
+  - extraire les comptages pour les échantillons mentionnés 
+  - normaliser les données (paragraphe normalisation : http://genoweb.toulouse.inra.fr/~faraut/circRNAFrontiers)          
+  - faire un plot et une régression linéaire pour chaque animal (nuage de points) : comparer l'expression estimée avec du totalRNAseq à celle estimée avec du mRNAseq
+  => Réaliser une régression linéaire entre ces estimations (1 par animal pour les 3 animaux réunis)
+  - faire apparaître dans le plot les gènes qui produisent des ARNcirc (fichier *sus_scrofa_bsj_gene_counts.tsv*) 
+  - montrer que la relation linéaire n'est pas la même pour ces derniers 
+
+**Quelques complications :**
+
+  - Les identifiants sont du type ssc_testis_X dans les 2 premiers fichiers, et du type FRXXXXX dans le fichier raffine.xxxxx
+  - il faut extraire ces trois échantillons des fichiers
+  - les comptages ont été réalisés sur deux versions différentes d'ensembl, par conséquent il y a seulement une certaine proportion de gènes en commun 
+
+
+# Librairies :
+
+```{r}
+library(ggplot2)
+suppressWarnings(suppressMessages(library(dplyr)))
+suppressWarnings(suppressMessages(library(ggpmisc)))
+suppressWarnings(suppressMessages(library(gridExtra)))
+```
+
+
+## 1. Lecture des données :
+
+```{r}
+df_linear = read.table("sus_scrofa_linear_counts.tsv", sep="\t", header=TRUE)
+df_readcount = read.table("raffine.gnexpr.readcount.matrix.tsv", sep="\t", header=TRUE)
+df_circrna = read.table("sus_scrofa_bsj_gene_counts.tsv", sep="\t", header=TRUE)
+df_readcount = cbind(gene_id = rownames(df_readcount), df_readcount, row.names = NULL)
+
+# names(df_linear)
+# names(df_readcount)
+```
+
+## 2. Extraction des échantillons d'intérêts :
+
+```{r}
+df_linear_sp = df_linear[ , c("gene_id", "ssc_testis_1", "ssc_testis_2", "ssc_testis_3")]
+colnames(df_linear_sp)<- c("gene_id", "ssc_testis_1_linear","ssc_testis_2_linear","ssc_testis_3_linear")
+
+df_circrna_sp = df_circrna[ , c("gene_id", "ssc_testis_1", "ssc_testis_2", "ssc_testis_3")]
+colnames(df_circrna_sp)<- c("gene_id", "ssc_testis_1_circ","ssc_testis_2_circ","ssc_testis_3_circ")
+
+df_readcount_sp = df_readcount[ , c("gene_id", "FR22JFZ201100831", "FR62ND6201203305", "FR79JCW201106154")]
+colnames(df_readcount_sp)<- c("gene_id", "ssc_testis_1","ssc_testis_2","ssc_testis_3")
+colnames(df_readcount_sp)<- c("gene_id", "ssc_testis_1_readc","ssc_testis_2_readc","ssc_testis_3_readc")
+
+df_tot = purrr::reduce(list(df_linear_sp, df_circrna_sp, df_readcount_sp), left_join, by = "gene_id")
+
+df_ssc_1 = df_tot[, c("ssc_testis_1_linear", "ssc_testis_1_readc", "ssc_testis_1_circ")]
+colnames(df_ssc_1)<- c("linear","readc", "circ")
+df_ssc_2 = df_tot[, c("ssc_testis_2_linear", "ssc_testis_2_readc", "ssc_testis_2_circ")]
+colnames(df_ssc_2)<- c("linear","readc", "circ")
+df_ssc_3 = df_tot[, c("ssc_testis_3_linear", "ssc_testis_3_readc", "ssc_testis_3_circ")]
+colnames(df_ssc_3)<- c("linear","readc", "circ")
+```
+
+## 3. Normalisation des données :
+
+```{r}
+
+```
+
+## 4. Régression linéaire (nuage de points) :
+
+```{r, fig.width=15, fig.height=7}
+
+ggp <- function(dataframe) {
+ggplot(dataframe, aes(x=as.numeric(dataframe$linear), y=as.numeric(dataframe$readc), color = dataframe$circ)) +
+  geom_point() + geom_smooth(method=lm, se=FALSE, fullrange=TRUE) + labs(x = "TotalRNAseq expression level", y = "mRNAseq expressino level") + 
+  stat_fit_glance(method = "lm",
+                  label.x = "right", label.y = "bottom", size=3.5,
+                  method.args = list(formula = y ~ x),
+                  mapping = aes(label = sprintf('r^2~"="~%.3f~~italic(P)~"="~%.2g',
+                                stat(r.squared), stat(p.value))), parse = TRUE)
+}
+
+ggp_1 = ggp(dataframe = df_ssc_1)
+ggp_2 = ggp(dataframe = df_ssc_2)
+ggp_3 = ggp(dataframe = df_ssc_3)
+
+suppressWarnings(suppressMessages(grid.arrange(ggp_1, ggp_2, ggp_3, ncol = 2, nrow = 2)))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
