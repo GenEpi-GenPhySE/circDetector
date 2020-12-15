@@ -300,8 +300,9 @@ suppressWarnings(suppressMessages(library(ggpmisc)))
 suppressWarnings(suppressMessages(library(gridExtra)))
 library(edgeR)</code></pre>
 <pre><code>## Loading required package: limma</code></pre>
-<div id="lecture-des-données" class="section level2">
-<h2>1. Lecture des données :</h2>
+</div>
+<div id="lecture-des-données" class="section level1">
+<h1>1. Lecture des données :</h1>
 <pre class="r"><code>df_linear = read.table(&quot;sus_scrofa_linear_counts.tsv&quot;, sep=&quot;\t&quot;, header=TRUE)
 df_circrna = read.table(&quot;sus_scrofa_bsj_gene_counts.tsv&quot;, sep=&quot;\t&quot;, header=TRUE)
 df_readcount = read.table(&quot;raffine.gnexpr.readcount.matrix.tsv&quot;, sep=&quot;\t&quot;, header=TRUE)
@@ -310,8 +311,8 @@ df_readcount = cbind(gene_id = rownames(df_readcount), df_readcount, row.names =
 # names(df_linear)
 # names(df_readcount)</code></pre>
 </div>
-<div id="normalisation-des-données" class="section level2">
-<h2>2. Normalisation des données :</h2>
+<div id="normalisation-des-données" class="section level1">
+<h1>2. Normalisation des données :</h1>
 <pre class="r"><code># Create a function to normalize data:
 normalization &lt;- function(dataframe) {
   Counts = round(data.frame(dataframe[,-1], row.names = dataframe[,1]))
@@ -335,8 +336,8 @@ df_linear_norm = normalization(dataframe = df_linear)
 df_circrna_norm = normalization(dataframe = df_circrna)
 df_readc_norm = normalization(dataframe = df_readcount)</code></pre>
 </div>
-<div id="extraction-des-échantillons-dintérêts" class="section level2">
-<h2>3. Extraction des échantillons d’intérêts :</h2>
+<div id="extraction-des-échantillons-dintérêts" class="section level1">
+<h1>3. Extraction des échantillons d’intérêts :</h1>
 <pre class="r"><code>df_linear_sp = df_linear_norm[ , c(&quot;gene_id&quot;, &quot;ssc_testis_1&quot;, &quot;ssc_testis_2&quot;, &quot;ssc_testis_3&quot;)]
 colnames(df_linear_sp)&lt;- c(&quot;gene_id&quot;, &quot;ssc_testis_1_linear&quot;,&quot;ssc_testis_2_linear&quot;,&quot;ssc_testis_3_linear&quot;)
 
@@ -356,8 +357,8 @@ colnames(df_ssc_2)&lt;- c(&quot;linear&quot;,&quot;readc&quot;, &quot;circ&quot;
 df_ssc_3 = df_tot[, c(&quot;ssc_testis_3_linear&quot;, &quot;ssc_testis_3_readc&quot;, &quot;ssc_testis_3_circ&quot;)]
 colnames(df_ssc_3)&lt;- c(&quot;linear&quot;,&quot;readc&quot;, &quot;circ&quot;)</code></pre>
 </div>
-<div id="régression-linéaire-nuage-de-points" class="section level2">
-<h2>4. Régression linéaire (nuage de points) :</h2>
+<div id="régression-linéaire-nuage-de-points" class="section level1">
+<h1>4. Régression linéaire (nuage de points) :</h1>
 <pre class="r"><code>ggp &lt;- function(dataframe, title) {
 ggplot(dataframe, aes(x=as.numeric(dataframe$linear), y=as.numeric(dataframe$readc), color = !is.na(dataframe$circ))) +
   geom_point() +
@@ -389,7 +390,6 @@ ggp_1 = ggp(dataframe = df_ssc_1, &quot;ssc_testis_1 (31)&quot;)</code></pre>
 <li><p>Le décalage vers la droite des points marrons, montre que les gènes produisant des ARN circulaires sont « choisis » parmi ceux qui s’expriment par une quantité notable de transcrits polyA+ dans ce tissu</p></li>
 <li><p>Le décalage vers le bas des points marron montre que l’évaluation dans le total RNAseq conduit à une légère sur-évaluation (avec le testis-31, on devrait voir un bien plus gros décalage)</p></li>
 </ul>
-</div>
 </div>
 
 

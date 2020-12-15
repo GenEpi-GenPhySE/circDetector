@@ -47,7 +47,7 @@ library(edgeR)
 ```
 
 
-## 1. Lecture des données :
+# 1. Lecture des données :
 
 ```{r}
 df_linear = read.table("sus_scrofa_linear_counts.tsv", sep="\t", header=TRUE)
@@ -59,7 +59,7 @@ df_readcount = cbind(gene_id = rownames(df_readcount), df_readcount, row.names =
 # names(df_readcount)
 ```
 
-## 2. Normalisation des données :
+# 2. Normalisation des données :
 
 ```{r}
 # Create a function to normalize data:
@@ -87,7 +87,7 @@ df_readc_norm = normalization(dataframe = df_readcount)
 ```
 
 
-## 3. Extraction des échantillons d'intérêts :
+# 3. Extraction des échantillons d'intérêts :
 
 ```{r}
 df_linear_sp = df_linear_norm[ , c("gene_id", "ssc_testis_1", "ssc_testis_2", "ssc_testis_3")]
@@ -111,7 +111,7 @@ colnames(df_ssc_3)<- c("linear","readc", "circ")
 ```
 
 
-## 4. Régression linéaire (nuage de points) :
+# 4. Régression linéaire (nuage de points) :
 
 ```{r, fig.width=15, fig.height=10}
 
