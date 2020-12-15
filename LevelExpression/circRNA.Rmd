@@ -31,15 +31,9 @@ Les trois fichiers de comptage :
   - extraire les comptages pour les échantillons mentionnés 
   - normaliser les données (paragraphe normalisation : http://genoweb.toulouse.inra.fr/~faraut/circRNAFrontiers)          
   - faire un plot et une régression linéaire pour chaque animal (nuage de points) : comparer l'expression estimée avec du totalRNAseq à celle estimée avec du mRNAseq
-  => Réaliser une régression linéaire entre ces estimations (1 par animal pour les 3 animaux réunis)
+  => Réaliser une régression linéaire entre ces estimations (1 par animal)
   - faire apparaître dans le plot les gènes qui produisent des ARNcirc (fichier *sus_scrofa_bsj_gene_counts.tsv*) 
   - montrer que la relation linéaire n'est pas la même pour ces derniers 
-
-**Quelques complications :**
-
-  - Les identifiants sont du type ssc_testis_X dans les 2 premiers fichiers, et du type FRXXXXX dans le fichier raffine.xxxxx
-  - il faut extraire ces trois échantillons des fichiers
-  - les comptages ont été réalisés sur deux versions différentes d'ensembl, par conséquent il y a seulement une certaine proportion de gènes en commun 
 
 
 # Librairies :
@@ -49,6 +43,7 @@ library(ggplot2)
 suppressWarnings(suppressMessages(library(dplyr)))
 suppressWarnings(suppressMessages(library(ggpmisc)))
 suppressWarnings(suppressMessages(library(gridExtra)))
+library(edgeR)
 ```
 
 
@@ -56,24 +51,52 @@ suppressWarnings(suppressMessages(library(gridExtra)))
 
 ```{r}
 df_linear = read.table("sus_scrofa_linear_counts.tsv", sep="\t", header=TRUE)
-df_readcount = read.table("raffine.gnexpr.readcount.matrix.tsv", sep="\t", header=TRUE)
 df_circrna = read.table("sus_scrofa_bsj_gene_counts.tsv", sep="\t", header=TRUE)
+df_readcount = read.table("raffine.gnexpr.readcount.matrix.tsv", sep="\t", header=TRUE)
 df_readcount = cbind(gene_id = rownames(df_readcount), df_readcount, row.names = NULL)
 
 # names(df_linear)
 # names(df_readcount)
 ```
 
-## 2. Extraction des échantillons d'intérêts :
+## 2. Normalisation des données :
 
 ```{r}
-df_linear_sp = df_linear[ , c("gene_id", "ssc_testis_1", "ssc_testis_2", "ssc_testis_3")]
+# Create a function to normalize data:
+normalization <- function(dataframe) {
+  Counts = round(data.frame(dataframe[,-1], row.names = dataframe[,1]))
+  pseudoCounts <- log2(Counts+1)
+  dgeCounts <- DGEList(Counts)
+
+  # We normalize the data in order to take into account the different overall number of reads between samples
+  dgeCounts <- calcNormFactors(dgeCounts, method="TMM")
+  eff.lib.size <- dgeCounts$samples$lib.size*dgeCounts$samples$norm.factors
+  normCounts <- sweep(dgeCounts$counts, 2, eff.lib.size, "/")*10^6
+  
+  # which is equivalent to normCounts <- cpm(dgeFull)
+  pseudoNormCounts <- log2(normCounts + 1)
+  df_norm = data.frame(pseudoNormCounts)
+  df_norm = cbind(gene_id = rownames(df_norm), df_norm, row.names = NULL)
+  return(df_norm)
+}
+
+# Apply the normalize function on data:
+df_linear_norm = normalization(dataframe = df_linear)
+df_circrna_norm = normalization(dataframe = df_circrna)
+df_readc_norm = normalization(dataframe = df_readcount)
+```
+
+
+## 3. Extraction des échantillons d'intérêts :
+
+```{r}
+df_linear_sp = df_linear_norm[ , c("gene_id", "ssc_testis_1", "ssc_testis_2", "ssc_testis_3")]
 colnames(df_linear_sp)<- c("gene_id", "ssc_testis_1_linear","ssc_testis_2_linear","ssc_testis_3_linear")
 
-df_circrna_sp = df_circrna[ , c("gene_id", "ssc_testis_1", "ssc_testis_2", "ssc_testis_3")]
+df_circrna_sp = df_circrna_norm[ , c("gene_id", "ssc_testis_1", "ssc_testis_2", "ssc_testis_3")]
 colnames(df_circrna_sp)<- c("gene_id", "ssc_testis_1_circ","ssc_testis_2_circ","ssc_testis_3_circ")
 
-df_readcount_sp = df_readcount[ , c("gene_id", "FR22JFZ201100831", "FR62ND6201203305", "FR79JCW201106154")]
+df_readcount_sp = df_readc_norm[ , c("gene_id", "FR22JFZ201100831", "FR62ND6201203305", "FR79JCW201106154")]
 colnames(df_readcount_sp)<- c("gene_id", "ssc_testis_1","ssc_testis_2","ssc_testis_3")
 colnames(df_readcount_sp)<- c("gene_id", "ssc_testis_1_readc","ssc_testis_2_readc","ssc_testis_3_readc")
 
@@ -87,24 +110,27 @@ df_ssc_3 = df_tot[, c("ssc_testis_3_linear", "ssc_testis_3_readc", "ssc_testis_3
 colnames(df_ssc_3)<- c("linear","readc", "circ")
 ```
 
-## 3. Normalisation des données :
-
-```{r}
-
-```
 
 ## 4. Régression linéaire (nuage de points) :
 
 ```{r, fig.width=15, fig.height=7}
 
+# blue : Genes not involved in the production of circRNA
+# bronw : Genes involved in the production of circRNA
+
 ggp <- function(dataframe) {
-ggplot(dataframe, aes(x=as.numeric(dataframe$linear), y=as.numeric(dataframe$readc), color = dataframe$circ)) +
-  geom_point() + geom_smooth(method=lm, se=FALSE, fullrange=TRUE) + labs(x = "TotalRNAseq expression level", y = "mRNAseq expressino level") + 
-  stat_fit_glance(method = "lm",
-                  label.x = "right", label.y = "bottom", size=3.5,
-                  method.args = list(formula = y ~ x),
-                  mapping = aes(label = sprintf('r^2~"="~%.3f~~italic(P)~"="~%.2g',
-                                stat(r.squared), stat(p.value))), parse = TRUE)
+ggplot(dataframe, aes(x=as.numeric(dataframe$linear), y=as.numeric(dataframe$readc), color = ! is.na(dataframe$circ))) +
+  geom_point() + 
+  geom_smooth(method=lm, se=FALSE, fullrange=TRUE) + 
+    labs(x = "TotalRNAseq expression level", y = "mRNAseq expressino level") +
+    # scale_fill_discrete(name = "Genes", labels = c("Not involved in the production of circRNA", "Involved in the production of circRNA")) +
+  # stat_fit_glance(method = "lm",
+  #                 label.x = "right", label.y = "bottom", size=3.5,
+  #                 method.args = list(formula = y ~ x),
+  #                 mapping = aes(label = sprintf('r^2~"="~%.3f~~italic(P)~"="~%.2g',
+  #                               stat(r.squared), stat(p.value))), parse = TRUE)
+    theme(legend.title = element_blank()) +
+  scale_fill_manual(values=c("blue", "brown")) 
 }
 
 ggp_1 = ggp(dataframe = df_ssc_1)
