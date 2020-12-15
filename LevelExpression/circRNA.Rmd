@@ -130,7 +130,8 @@ ggplot(dataframe, aes(x=as.numeric(dataframe$linear), y=as.numeric(dataframe$rea
   #                 mapping = aes(label = sprintf('r^2~"="~%.3f~~italic(P)~"="~%.2g',
   #                               stat(r.squared), stat(p.value))), parse = TRUE)
     theme(legend.title = element_blank()) +
-  scale_fill_manual(values=c("blue", "brown")) 
+  scale_color_manual(values=c('dodgerblue2','saddlebrown')) 
+  # + scale_fill_discrete(name = "Test", labels = c("A", "B"))
 }
 
 ggp_1 = ggp(dataframe = df_ssc_1)
