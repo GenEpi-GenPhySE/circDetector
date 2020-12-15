@@ -118,25 +118,25 @@ colnames(df_ssc_3)<- c("linear","readc", "circ")
 # blue : Genes not involved in the production of circRNA
 # bronw : Genes involved in the production of circRNA
 
-ggp <- function(dataframe) {
+ggp <- function(dataframe, title) {
 ggplot(dataframe, aes(x=as.numeric(dataframe$linear), y=as.numeric(dataframe$readc), color = ! is.na(dataframe$circ))) +
   geom_point() + 
   geom_smooth(method=lm, se=FALSE, fullrange=TRUE) + 
-    labs(x = "TotalRNAseq expression level", y = "mRNAseq expressino level") +
+    labs(title=title, x = "TotalRNAseq expression level", y = "mRNAseq expressino level") +
     # scale_fill_discrete(name = "Genes", labels = c("Not involved in the production of circRNA", "Involved in the production of circRNA")) +
   # stat_fit_glance(method = "lm",
   #                 label.x = "right", label.y = "bottom", size=3.5,
   #                 method.args = list(formula = y ~ x),
   #                 mapping = aes(label = sprintf('r^2~"="~%.3f~~italic(P)~"="~%.2g',
   #                               stat(r.squared), stat(p.value))), parse = TRUE)
-    theme(legend.title = element_blank()) +
+    theme(legend.title = element_blank(), plot.title = element_text(hjust = 0.5)) +
   scale_color_manual(values=c('dodgerblue2','saddlebrown')) 
   # + scale_fill_discrete(name = "Test", labels = c("A", "B"))
 }
 
-ggp_1 = ggp(dataframe = df_ssc_1)
-ggp_2 = ggp(dataframe = df_ssc_2)
-ggp_3 = ggp(dataframe = df_ssc_3)
+ggp_1 = ggp(dataframe = df_ssc_1, "ssc_testis_1")
+ggp_2 = ggp(dataframe = df_ssc_2, "ssc_testis_2")
+ggp_3 = ggp(dataframe = df_ssc_3, "ssc_testis_3")
 
 suppressWarnings(suppressMessages(grid.arrange(ggp_1, ggp_2, ggp_3, ncol = 2, nrow = 2)))
 ```
