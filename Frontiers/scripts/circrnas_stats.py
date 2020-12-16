@@ -111,14 +111,20 @@ def parse_log_file(logfile):
 
 
 def get_annotations(sample, root_annot_dir):
+    """
+    Extract circexplorer2 annotation
+    """
     annot_dir = os.path.join(root_annot_dir, sample)
-    annot_file = os.path.join(annot_dir, "circexplorer_circ.txt")
+    annot_file = os.path.join(annot_dir, "circexplorer2_circ.txt")
     names = get_circexplorer2_columns()
     annot = pd.read_csv(annot_file, sep='\t', names=names)
     return annot
 
 
 def sample_stats(sample, species, root_annot_dir, root_mapping_dir):
+    """
+    Compute the number of circ and input reads for each sample
+    """
     mapping = get_mapping_stats(sample, species, root_mapping_dir)
     annot = get_annotations(sample, root_annot_dir)
 
@@ -130,6 +136,9 @@ def sample_stats(sample, species, root_annot_dir, root_mapping_dir):
     return values
 
 def get_circ_key(row):
+    """
+    Construct an unique key for each circular RNA
+    """
     chrom = row["chrom"]
     start = row["start"]
     end = row["end"]
@@ -151,25 +160,30 @@ def sample_circrnas(sample, species, root_annot_dir, root_mapping_dir):
         if row['circType'] == "circRNA": # only exonic circ RNAs
             key = get_circ_key(row)
             circrnas[key] = { 'ccr': row['readNumber'],
-                             'isoformName': row['isoformName']}
+                              'circType': row['circType'],
+                              'isoformName': row['isoformName']}
     return circrnas
 
 
 def species_circrnas(samples_circs):
+    """
+    Compute circRNAs detected in each sample
+    """
     circ_set = set()
-    circ_genenames = defaultdict()
+    circ_annot = defaultdict(lambda: defaultdict())
     for sample in samples_circs:
         circ_keys = samples_circs[sample].keys()
         circ_set.update(circ_keys)
         # Get circ rnas gene names
         for circ in circ_keys:
             if circ not in circ_genenames:
-                circ_genenames[circ] = samples_circs[sample][circ]['isoformName']
+                circ_genenames[circ] = { 'genename': samples_circs[sample][circ]['isoformName'],
+                                         'circType': samples_circs[sample][circ]['circType']}
 
     species_circ = []
     sorted_samples = sorted(samples_circs.keys())
     for circ in circ_set:
-        circ_per_sample = [circ, circ_genenames[circ]]
+        circ_per_sample = [circ, circ_genenames[circ]['genename'], circ_genenames[circ]['circType']]
         for sample in sorted_samples:
             circrnas = samples_circs[sample]
             if circ in circrnas:
@@ -177,7 +191,7 @@ def species_circrnas(samples_circs):
             else:
                 circ_per_sample.append(0)
         species_circ.append(circ_per_sample)
-    columns = ['circ', 'genename']
+    columns = ['circ', 'genename', 'circType']
     columns.extend(sorted_samples)
     df = pd.DataFrame(species_circ, columns=columns)
     return df
@@ -196,7 +210,7 @@ def main(input_file, mapping_dir, detection_dir):
     species_circ = defaultdict()
     for species in stats:
         circrnas = species_circrnas(stats[species])
-        output_file = "%s_circ_counts.tsv" % species
+        output_file = "%s_circexplorer_counts.tsv" % species
         circrnas.to_csv(output_file, sep="\t", index=False)
 
 

@@ -126,7 +126,8 @@ def sample_stats(sample, species, root_annot_dir, root_mapping_dir):
     nb_reads = int(mapping['nb input reads'])
     read_len = int(mapping['readlen'])
     nb_circ = len(annot[annot['readNumber']>=4])
-    values = [sample, nb_reads, read_len, nb_circ]
+    nb_ccr = sum(annot['readNumber'])
+    values = [sample, nb_reads, read_len, nb_circ, nb_ccr]
 
     return values
 
@@ -139,7 +140,7 @@ def main(input_file, mapping_dir, detection_dir, output_file):
     for index, row in samples.iterrows():
         stats.append(sample_stats(index, row["species"],
                                     detection_dir, mapping_dir))
-    df = pd.DataFrame(stats, columns=['sample', 'reads', 'readlen', 'nb_circ'])
+    df = pd.DataFrame(stats, columns=['sample', 'reads', 'readlen', 'nb_circ', 'nb_ccr'])
     df.to_csv(output_file, sep="\t", index=False)
 
 
