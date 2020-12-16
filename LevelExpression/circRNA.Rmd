@@ -40,6 +40,7 @@ Les trois fichiers de comptage :
 
 ```{r}
 library(ggplot2)
+suppressWarnings(suppressMessages(library(plyr)))
 suppressWarnings(suppressMessages(library(dplyr)))
 suppressWarnings(suppressMessages(library(ggpmisc)))
 suppressWarnings(suppressMessages(library(gridExtra)))
@@ -55,8 +56,10 @@ df_circrna = read.table("sus_scrofa_bsj_gene_counts.tsv", sep="\t", header=TRUE)
 df_readcount = read.table("raffine.gnexpr.readcount.matrix.tsv", sep="\t", header=TRUE)
 df_readcount = cbind(gene_id = rownames(df_readcount), df_readcount, row.names = NULL)
 
-# names(df_linear)
-# names(df_readcount)
+# nrow(df_linear) # 26676
+# nrow(df_readcount) # 25880
+commom_gene_ids = intersect(df_linear$gene_id, df_readcount$gene_id)
+# length(commom_gene_ids) # 17618
 ```
 
 # 2. Normalisation des données :
@@ -102,12 +105,17 @@ colnames(df_readcount_sp)<- c("gene_id", "ssc_testis_1_readc","ssc_testis_2_read
 
 df_tot = purrr::reduce(list(df_linear_sp, df_circrna_sp, df_readcount_sp), left_join, by = "gene_id")
 
-df_ssc_1 = df_tot[, c("ssc_testis_1_linear", "ssc_testis_1_readc", "ssc_testis_1_circ")]
-colnames(df_ssc_1)<- c("linear","readc", "circ")
-df_ssc_2 = df_tot[, c("ssc_testis_2_linear", "ssc_testis_2_readc", "ssc_testis_2_circ")]
-colnames(df_ssc_2)<- c("linear","readc", "circ")
-df_ssc_3 = df_tot[, c("ssc_testis_3_linear", "ssc_testis_3_readc", "ssc_testis_3_circ")]
-colnames(df_ssc_3)<- c("linear","readc", "circ")
+df_ssc_1 = df_tot[, c("gene_id", "ssc_testis_1_linear", "ssc_testis_1_readc", "ssc_testis_1_circ")]
+colnames(df_ssc_1)<- c("gene_id", "linear","readc", "circ")
+df_ssc_1 = df_ssc_1[ df_ssc_1$gene_id %in% commom_gene_ids, ]
+
+df_ssc_2 = df_tot[, c("gene_id", "ssc_testis_2_linear", "ssc_testis_2_readc", "ssc_testis_2_circ")]
+colnames(df_ssc_2)<- c("gene_id", "linear","readc", "circ")
+df_ssc_2 = df_ssc_2[ df_ssc_2$gene_id %in% commom_gene_ids, ]
+
+df_ssc_3 = df_tot[, c("gene_id", "ssc_testis_3_linear", "ssc_testis_3_readc", "ssc_testis_3_circ")]
+colnames(df_ssc_3)<- c("gene_id", "linear","readc", "circ")
+df_ssc_3 = df_ssc_3[ df_ssc_3$gene_id %in% commom_gene_ids, ]
 ```
 
 
@@ -116,21 +124,25 @@ colnames(df_ssc_3)<- c("linear","readc", "circ")
 ```{r, fig.width=15, fig.height=10}
 
 ggp <- function(dataframe, title) {
-ggplot(dataframe, aes(x=as.numeric(dataframe$linear), y=as.numeric(dataframe$readc), color = !is.na(dataframe$circ))) +
-  geom_point() +
-  geom_smooth(method=lm, se=FALSE, fullrange=TRUE) +
-    labs(title=title, x = "TotalRNAseq expression level (read count/gene norm)",
-                      y = "mRNAseq expressino level (read count/gene norm)") +
-  stat_fit_glance(method = "lm", label.x = "left", label.y = "top", size=3.5,
+  dataframe$col = as.factor(as.vector(unlist(lapply(dataframe$circ, function(x){if(is.na(x)){"no circ"} else{"circ"}}))))
+ggplot(dataframe, aes(x=as.numeric(linear), y=as.numeric(readc))) +
+  geom_point(aes(x=as.numeric(linear), y=as.numeric(readc), color = col)) +
+  geom_smooth(method=lm, se=FALSE, fullrange=TRUE, aes(x=as.numeric(linear), y=as.numeric(readc)), colour="dodgerblue2") +
+  geom_point(data = subset(dataframe, col == 'circ'), aes(x=as.numeric(linear), y=as.numeric(readc), color = col)) +
+  geom_smooth(method=lm, se=FALSE, fullrange=TRUE, data = subset(dataframe, col == 'circ'), aes(x=as.numeric(linear), y=as.numeric(readc)), colour="saddlebrown") +
+  labs(title=title, x = "TotalRNAseq expression level (read count/gene norm)",
+                    y = "mRNAseq expression level (read count/gene norm)") +
+  theme(plot.title = element_text(hjust = 0.5), legend.position="bottom") +
+  scale_color_manual(values=c('saddlebrown', 'dodgerblue2'), name="Genes",
+                     labels=c("Involved in the production of circRNA", "Not involved in the production of circRNA")) +
+  stat_fit_glance(data = subset(dataframe, col == 'no circ'), colour="dodgerblue2",
+                  method = "lm", label.x = "left", label.y = 1, size=3.5,
                   method.args = list(formula = y ~ x),
                   mapping = aes(label = sprintf('r^2~"="~%.3f', stat(r.squared))), parse = TRUE) +
-  # theme(legend.title = element_blank(), plot.title = element_text(hjust = 0.5), legend.position="bottom") +
-  theme(plot.title = element_text(hjust = 0.5), legend.position="bottom") +
-  scale_color_manual(values=c('dodgerblue2','saddlebrown'), name="Genes",
-                     labels=c("Not involved in the production of circRNA",
-                              "Involved in the production of circRNA")) +
-  scale_fill_manual(values=c('dodgerblue2','saddlebrown')) +
-  stat_ellipse(geom="polygon", aes(alpha = 0.4, fill = !is.na(dataframe$circ), show.legend = FALSE), show.legend = FALSE, type = "norm")
+  stat_fit_glance(data = subset(dataframe, col == 'circ'), colour="saddlebrown",
+                  method = "lm", label.x = "left", label.y = "top", size=3.5,
+                  method.args = list(formula = y ~ x),
+                  mapping = aes(label = sprintf('r^2~"="~%.3f', stat(r.squared))), parse = TRUE)
 }
 
 ggp_1 = ggp(dataframe = df_ssc_1, "ssc_testis_1 (31)")
@@ -139,10 +151,5 @@ ggp_3 = ggp(dataframe = df_ssc_3, "ssc_testis_3 (54)")
 
 suppressWarnings(suppressMessages(grid.arrange(ggp_1, ggp_2, ggp_3, ncol = 2, nrow = 2)))
 ```
-
-
 **Conclusion :**
 
-- Le décalage vers la droite des points marrons, montre que les gènes produisant des ARN circulaires sont « choisis » parmi ceux qui s’expriment par une quantité notable de transcrits polyA+ dans ce tissu
-
-- Le décalage vers le bas des points marron montre que l’évaluation dans le total RNAseq conduit à une légère sur-évaluation (avec le testis-31, on devrait voir un bien plus gros décalage)
