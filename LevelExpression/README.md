@@ -22,3 +22,15 @@ Les trois fichiers de comptage :
   => Réaliser une régression linéaire entre ces estimations (1 par animal)
   - faire apparaître dans le plot les gènes qui produisent des ARNcirc (fichier *sus_scrofa_bsj_gene_counts.tsv*) 
   - montrer que la relation linéaire n'est pas la même pour ces derniers 
+  
+**Figures :**
+Régression linéaire : comparaison de l'expression du totalRNAseq et du mRNAseq : 
+
+![circrna](https://github.com/ccerutti88/circRNA/blob/master/LevelExpression/mRNAseq_totalRNAseq.png?raw=true)
+  
+- Abscisse : niveau d'espression en total RNAseq
+- Ordonnée : niveau d'expression en mRNAseq
+- Points gris : gènes non concernés par la production de circRNAs
+- Points marrons : gènes concernés par la production de circRNAs
+  
+**Conclusion :**
