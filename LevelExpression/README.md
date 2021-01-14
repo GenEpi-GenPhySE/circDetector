@@ -31,6 +31,6 @@ Régression linéaire : comparaison de l'expression du totalRNAseq et du mRNAseq
 - Abscisse : niveau d'espression en total RNAseq
 - Ordonnée : niveau d'expression en mRNAseq
 - Points gris : gènes non concernés par la production de circRNAs
-- Points marrons : gènes concernés par la production de circRNAs
+- Points marrons : gènes concernés par la production de circRNAs. Le dégradé de marron correspond au junction-ratio.
   
 **Conclusion :**
