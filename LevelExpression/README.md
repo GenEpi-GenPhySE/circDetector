@@ -28,7 +28,7 @@ Régression linéaire : comparaison de l'expression du totalRNAseq et du mRNAseq
 
 ![circrna](https://github.com/ccerutti88/circRNA/blob/master/LevelExpression/circRNA_mRNAseq_vs_totalRNAseq.png)
   
-- Abscisse : niveau d'espression en total RNAseq
-- Ordonnée : niveau d'expression en mRNAseq
+- Abscisse : niveau d'expression en mRNAseq
+- Ordonnée : niveau d'espression en total RNAseq
 - Points gris : gènes non concernés par la production de circRNAs
 - Points marrons : gènes concernés par la production de circRNAs. Le dégradé de marron correspond au junction-ratio.
