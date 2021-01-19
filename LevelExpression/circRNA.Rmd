@@ -60,6 +60,14 @@ df_readcount = cbind(gene_id = rownames(df_readcount), df_readcount, row.names =
 df_fr_sc = read.table("junc_ratio/circexplorer/sus_scrofa_junc_ratio_counts.tsv", sep="\t", header=TRUE)
 df_fr_sc = ddply(df_fr_sc,"gene_id",numcolwise(sum))
 
+# Get the firt gene_id if 2 gene_id were found : 
+bsj_gradient = read.table("sus_scrofa-CE+CIRI-only_Testis1-2-3-bygene.tsv", sep="\t", header=TRUE)
+gene_ids = as.vector(bsj_gradient$gene_id)
+gene_ids = sapply(strsplit(gene_ids,","), `[`, 1)
+gene_ids = as.factor(gene_ids)
+bsj_gradient$gene_id <- gene_ids
+bsj_gradient = ddply(bsj_gradient,"gene_id", numcolwise(sum))
+
 commom_gene_ids = intersect(df_linear$gene_id, df_readcount$gene_id)
 
 # Count per million reads : 
@@ -94,6 +102,7 @@ normalization <- function(dataframe) {
 df_linear_norm = normalization(dataframe = df_linear)
 df_circrna_norm = normalization(dataframe = df_circrna)
 df_readc_norm = normalization(dataframe = df_readcount)
+bsj_gradient_norm = normalization(dataframe = bsj_gradient)
 ```
 
 
@@ -110,7 +119,7 @@ df_readcount_sp = df_readc_norm[ , c("gene_id", "FR22JFZ201100831", "FR62ND62012
 colnames(df_readcount_sp)<- c("gene_id", "ssc_testis_1","ssc_testis_2","ssc_testis_3")
 colnames(df_readcount_sp)<- c("gene_id", "ssc_testis_1_readc","ssc_testis_2_readc","ssc_testis_3_readc")
 
-df_fr_sc_sp = df_fr_sc[ , c("gene_id", "ssc_testis_1", "ssc_testis_2", "ssc_testis_3")]
+df_fr_sc_sp = bsj_gradient_norm[ , c("gene_id", "ssc_testis_1", "ssc_testis_2", "ssc_testis_3")]
 colnames(df_fr_sc_sp)<- c("gene_id", "ssc_testis_1_fr","ssc_testis_2_fr","ssc_testis_3_fr")
 
 df_tot = purrr::reduce(list(df_linear_sp, df_circrna_sp, df_readcount_sp, df_fr_sc_sp), left_join, by = "gene_id")
@@ -134,11 +143,16 @@ df_ssc_3 = df_tot[, c("gene_id", "ssc_testis_3_linear", "ssc_testis_3_readc", "s
 colnames(df_ssc_3)<- c("gene_id", "linear","readc", "circ", "fr")
 df_ssc_3 = df_ssc_3[ df_ssc_3$gene_id %in% commom_gene_ids, ]
 
-# Delete read count == 0 (mRNA) :
+# Delete read count > 2 and if fr < 10 :
 
-df_ssc_1 = df_ssc_1[df_ssc_1$readc != 0, ]
-df_ssc_2 = df_ssc_2[df_ssc_2$readc != 0, ]
-df_ssc_3 = df_ssc_3[df_ssc_3$readc != 0, ]
+df_ssc_1 = df_ssc_1[df_ssc_1$readc > 3 & df_ssc_1$linear > 2, ]
+df_ssc_2 = df_ssc_2[df_ssc_2$readc > 3 & df_ssc_2$linear > 2, ]
+df_ssc_3 = df_ssc_3[df_ssc_3$readc > 3 & df_ssc_3$linear > 2, ]
+
+# Delete rows if fr = NA for circ and if fr < 5 for circ : 
+df_ssc_1 = df_ssc_1[(is.na(df_ssc_1$circ) | !is.na(df_ssc_1$fr) & df_ssc_1$fr > 7), ]
+df_ssc_2 = df_ssc_2[(is.na(df_ssc_2$circ) | !is.na(df_ssc_2$fr) & df_ssc_2$fr > 7), ]
+df_ssc_3 = df_ssc_3[(is.na(df_ssc_3$circ) | !is.na(df_ssc_3$fr) & df_ssc_3$fr > 7), ]
 ```
 
 
@@ -148,68 +162,34 @@ df_ssc_3 = df_ssc_3[df_ssc_3$readc != 0, ]
 
 ggp <- function(dataframe, title) {
   
-  circpal <- colorRampPalette(c("saddlebrown", "white"))
-  #circpal(10)
-  #nocircpal <- colorRampPalette(c("", ""))
-  
-  dataframe$col = as.factor(as.vector(unlist(lapply(dataframe$circ, function(x){if(is.na(x)){"no circ"} else{"circ"}}))))
+  dataframe$col = as.factor(as.vector(unlist(lapply(dataframe$circ, function(x){if(is.na(x)){"- circRNA"} else{"+ circRNA"}}))))
 
-  ggplot(dataframe, aes(x=as.numeric(linear), y=as.numeric(readc))) +
- 
-  geom_point(aes(x=as.numeric(linear), y=as.numeric(readc), color = col)) +
-  geom_smooth(method=lm, se=FALSE, fullrange=TRUE, aes(x=as.numeric(linear), y=as.numeric(readc)), colour="dodgerblue2") +
-  geom_point(data = subset(dataframe, col == 'circ'), aes(x=as.numeric(linear), y=as.numeric(readc), color = col)) +
-  geom_smooth(method=lm, se=FALSE, fullrange=TRUE, data = subset(dataframe, col == 'circ'), aes(x=as.numeric(linear), y=as.numeric(readc)), colour="saddlebrown") +
-  labs(title=title, x = "TotalRNAseq expression level (read count/gene norm)",
-                    y = "mRNAseq expression level (read count/gene norm)") +
-  theme(plot.title = element_text(hjust = 0.5), legend.position="bottom") +
-  
-  scale_color_manual(values=c('saddlebrown', 'dodgerblue2'), 
-                     name="Genes",
-                     labels=c("Involved in the production of circRNA", 
-                     "Not involved in the production of circRNA")) +
-  
-  stat_fit_glance(data = subset(dataframe, col == 'no circ'), colour="dodgerblue2",
-                  method = "lm", label.x = "left", label.y = 1, size=3.5,
-                  method.args = list(formula = y ~ x),
-                  mapping = aes(label = sprintf('r^2~"="~%.3f', stat(r.squared))), parse = TRUE) +
-  stat_fit_glance(data = subset(dataframe, col == 'circ'), colour="saddlebrown",
-                  method = "lm", label.x = "left", label.y = "top", size=3.5,
-                  method.args = list(formula = y ~ x),
-                  mapping = aes(label = sprintf('r^2~"="~%.3f', stat(r.squared))), parse = TRUE)
-}
-
-ggp_1 = ggp(dataframe = df_ssc_1, "ssc_testis_1 (31)")
-ggp_2 = ggp(dataframe = df_ssc_2, "ssc_testis_2 (05)")
-ggp_3 = ggp(dataframe = df_ssc_3, "ssc_testis_3 (54)")
-
-suppressWarnings(suppressMessages(grid.arrange(ggp_1, ggp_2, ggp_3, ncol = 2, nrow = 2)))
-```
-**Conclusion :**
-
-```{r, fig.width=15, fig.height=10}
-
-ggp <- function(dataframe, title) {
-  
-  dataframe$col = as.factor(as.vector(unlist(lapply(dataframe$circ, function(x){if(is.na(x)){"no circ"} else{"circ"}}))))
-  
   ggplot(dataframe) +
-    
-    labs(title=title, x = "TotalRNAseq expression level (read count/gene norm)",
-                      y = "mRNAseq expression level (read count/gene norm)") +
+
+    labs(title=title, x = "mRNA-seq log2(TMM)",
+                     y = "Total RNA-seq log2(TMM)", fill="Gene") +
     theme(plot.title = element_text(hjust = 0.5), legend.position="bottom") +
-    
-    geom_point(aes(x=linear, y=readc, color = fr)) +
-    geom_smooth(method=lm, se=FALSE, fullrange=TRUE, aes(x=linear, y=readc), colour="grey50") +
-    
-    geom_point(data = subset(dataframe, is.na(fr) == F), aes(x=linear, y=readc, color = fr)) +
-    geom_smooth(method=lm, se=FALSE, fullrange=TRUE, data = subset(dataframe, col == 'circ'), aes(x=linear, y=readc), colour="saddlebrown") +
-  
-    scale_color_manual(values=c('grey50', 'dodgerblue2'), name="Genes",
-                       labels=c("Involved in the production of circRNA", "Not involved in the production of circRNA")) +
-    
-    scale_color_gradient(low="saddlebrown", high="red") 
-}
+    geom_point(data=dataframe,shape=21,aes(x=readc, y=linear, fill=col), size=1) +
+    scale_fill_manual(values=c("dodgerblue2", "saddlebrown"), drop=FALSE) +
+    geom_point(data = subset(dataframe, col == "- circRNA"), 
+                aes(x = readc, y = linear, color = col), colour="dodgerblue2", size=1) +
+    geom_smooth(method=lm, se=FALSE, data = subset(dataframe, col == "- circRNA"),
+                                      aes(x = readc, y = linear, color = col), colour = "dodgerblue2") +
+    stat_poly_eq(data = subset(dataframe, col == '- circRNA'), colour="dodgerblue2",
+                 formula = "y~x", label.x = "left", label.y = 1,
+                 aes(label = paste(..eq.label.., ..rr.label.., sep = "*`,`~"),
+                 x = readc, y = linear, color = col), parse = TRUE)+
+    geom_point(data = subset(dataframe, col == "+ circRNA"),
+               aes(x = readc, y = linear, color = as.numeric(fr)), size=1)+ 
+    geom_smooth(method=lm, se=FALSE, data = subset(dataframe, col == "+ circRNA"),
+                                     aes(x = readc, y = linear, color = as.numeric(fr)),
+                                     colour="saddlebrown")+
+    stat_poly_eq(data = subset(dataframe, col == '+ circRNA'), colour="saddlebrown",
+                 formula = "y~x",
+                 aes(label = paste(..eq.label.., ..rr.label.., sep = "*`,`~"),
+                 x = readc, y = linear, color = col), parse = TRUE) +
+    scale_colour_gradient(low="saddlebrown", high="red", limits=c(7,13), name="log2(BSJ_reads_number)") 
+    }
 
 ggp_1 = ggp(dataframe = df_ssc_1, "ssc_testis_1 (31)")
 ggp_2 = ggp(dataframe = df_ssc_2, "ssc_testis_2 (05)")
@@ -217,52 +197,3 @@ ggp_3 = ggp(dataframe = df_ssc_3, "ssc_testis_3 (54)")
 
 suppressWarnings(suppressMessages(grid.arrange(ggp_1, ggp_2, ggp_3, ncol = 2, nrow = 2)))
 ```
-
-
-```{r, fig.width=15, fig.height=10}
-
-# ggp <- function(dataframe, title) {
-#   
-#   circpal <- colorRampPalette(c("saddlebrown", "white"))
-#   #circpal(10)
-#   #nocircpal <- colorRampPalette(c("", ""))
-#   
-#   dataframe$col = as.factor(as.vector(unlist(lapply(dataframe$circ, function(x){if(is.na(x)){"no circ"} else{"circ"}}))))
-# 
-#   ggplot(dataframe, aes(x=as.numeric(linear), y=as.numeric(readc))) +
-#  
-#   geom_point(aes(x=as.numeric(linear), y=as.numeric(readc), color = col)) +
-#   geom_smooth(method=lm, se=FALSE, fullrange=TRUE, aes(x=as.numeric(linear), y=as.numeric(readc)), colour="dodgerblue2") +
-#   geom_point(data = subset(dataframe, col == 'circ'), aes(x=as.numeric(linear), y=as.numeric(readc), color = col)) +
-#   geom_smooth(method=lm, se=FALSE, fullrange=TRUE, data = subset(dataframe, col == 'circ'), aes(x=as.numeric(linear), y=as.numeric(readc)), colour="saddlebrown") +
-#   labs(title=title, x = "TotalRNAseq expression level (read count/gene norm)",
-#                     y = "mRNAseq expression level (read count/gene norm)") +
-#   theme(plot.title = element_text(hjust = 0.5), legend.position="bottom") +
-#   
-#   scale_color_manual(values=c('saddlebrown', 'dodgerblue2'), 
-#                      name="Genes",
-#                      labels=c("Involved in the production of circRNA", 
-#                      "Not involved in the production of circRNA")) +
-#   
-#   stat_fit_glance(data = subset(dataframe, col == 'no circ'), colour="dodgerblue2",
-#                   method = "lm", label.x = "left", label.y = 1, size=3.5,
-#                   method.args = list(formula = y ~ x),
-#                   mapping = aes(label = sprintf('r^2~"="~%.3f', stat(r.squared))), parse = TRUE) +
-#   stat_fit_glance(data = subset(dataframe, col == 'circ'), colour="saddlebrown",
-#                   method = "lm", label.x = "left", label.y = "top", size=3.5,
-#                   method.args = list(formula = y ~ x),
-#                   mapping = aes(label = sprintf('r^2~"="~%.3f', stat(r.squared))), parse = TRUE)
-# }
-# 
-# ggp_1 = ggp(dataframe = df_ssc_1, "ssc_testis_1 (31)")
-# ggp_2 = ggp(dataframe = df_ssc_2, "ssc_testis_2 (05)")
-# ggp_3 = ggp(dataframe = df_ssc_3, "ssc_testis_3 (54)")
-# 
-# suppressWarnings(suppressMessages(grid.arrange(ggp_1, ggp_2, ggp_3, ncol = 2, nrow = 2)))
-```
-
-
-
-
-
-
