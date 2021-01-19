@@ -26,7 +26,7 @@ Les trois fichiers de comptage :
 **Figures :**
 Régression linéaire : comparaison de l'expression du totalRNAseq et du mRNAseq : 
 
-![circrna](https://github.com/ccerutti88/circRNA/blob/master/LevelExpression/mRNAseq_totalRNAseq.png?raw=true)
+![circrna](https://github.com/ccerutti88/circRNA/blob/master/LevelExpression/circRNA_mRNAseq_vs_totalRNAseq.png)
   
 - Abscisse : niveau d'espression en total RNAseq
 - Ordonnée : niveau d'expression en mRNAseq
