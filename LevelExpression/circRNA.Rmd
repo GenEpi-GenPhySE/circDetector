@@ -145,9 +145,11 @@ df_ssc_3 = df_ssc_3[ df_ssc_3$gene_id %in% commom_gene_ids, ]
 
 # Delete read count > 2 and if fr < 10 :
 
-df_ssc_1 = df_ssc_1[df_ssc_1$readc > 3 & df_ssc_1$linear > 2, ]
-df_ssc_2 = df_ssc_2[df_ssc_2$readc > 3 & df_ssc_2$linear > 2, ]
-df_ssc_3 = df_ssc_3[df_ssc_3$readc > 3 & df_ssc_3$linear > 2, ]
+v = 2
+
+df_ssc_1 = df_ssc_1[df_ssc_1$readc > v & df_ssc_1$linear > v, ]
+df_ssc_2 = df_ssc_2[df_ssc_2$readc > v & df_ssc_2$linear > v, ]
+df_ssc_3 = df_ssc_3[df_ssc_3$readc > v & df_ssc_3$linear > v, ]
 
 # Delete rows if fr = NA for circ and if fr < 5 for circ : 
 df_ssc_1 = df_ssc_1[(is.na(df_ssc_1$circ) | !is.na(df_ssc_1$fr) & df_ssc_1$fr > 7), ]
@@ -158,37 +160,40 @@ df_ssc_3 = df_ssc_3[(is.na(df_ssc_3$circ) | !is.na(df_ssc_3$fr) & df_ssc_3$fr > 
 
 # 4. Régression linéaire (nuage de points) :
 
-```{r, fig.width=15, fig.height=10}
+```{r, fig.width=15, fig.height=15}
 
 ggp <- function(dataframe, title) {
   
   dataframe$col = as.factor(as.vector(unlist(lapply(dataframe$circ, function(x){if(is.na(x)){"- circRNA"} else{"+ circRNA"}}))))
-
+  psize = 1.5
+  
   ggplot(dataframe) +
 
     labs(title=title, x = "mRNA-seq log2(TMM)",
                      y = "Total RNA-seq log2(TMM)", fill="Gene") +
     theme(plot.title = element_text(hjust = 0.5), legend.position="bottom") +
-    geom_point(data=dataframe,shape=21,aes(x=readc, y=linear, fill=col), size=1) +
-    scale_fill_manual(values=c("dodgerblue2", "saddlebrown"), drop=FALSE) +
+    geom_point(data=dataframe,shape=21,aes(x=readc, y=linear, fill=col), size=psize) +
+    scale_fill_manual(values=c("cadetblue2", "saddlebrown"), drop=FALSE) +
     geom_point(data = subset(dataframe, col == "- circRNA"), 
-                aes(x = readc, y = linear, color = col), colour="dodgerblue2", size=1) +
+                aes(x = readc, y = linear, color = col), colour="cadetblue2", size=psize) +
     geom_smooth(method=lm, se=FALSE, data = subset(dataframe, col == "- circRNA"),
-                                      aes(x = readc, y = linear, color = col), colour = "dodgerblue2") +
-    stat_poly_eq(data = subset(dataframe, col == '- circRNA'), colour="dodgerblue2",
+                                      aes(x = readc, y = linear, color = col), colour = "cadetblue2") +
+    stat_poly_eq(data = subset(dataframe, col == '- circRNA'), colour="cadetblue3",
                  formula = "y~x", label.x = "left", label.y = 1,
                  aes(label = paste(..eq.label.., ..rr.label.., sep = "*`,`~"),
                  x = readc, y = linear, color = col), parse = TRUE)+
-    geom_point(data = subset(dataframe, col == "+ circRNA"),
-               aes(x = readc, y = linear, color = as.numeric(fr)), size=1)+ 
     geom_smooth(method=lm, se=FALSE, data = subset(dataframe, col == "+ circRNA"),
                                      aes(x = readc, y = linear, color = as.numeric(fr)),
-                                     colour="saddlebrown")+
-    stat_poly_eq(data = subset(dataframe, col == '+ circRNA'), colour="saddlebrown",
+                                     colour="burlywood")+
+    geom_point(data = subset(dataframe, col == "+ circRNA"),
+               aes(x = readc, y = linear, color = as.numeric(fr)), size=psize)+ 
+    stat_poly_eq(data = subset(dataframe, col == '+ circRNA'), colour="sandybrown",
                  formula = "y~x",
                  aes(label = paste(..eq.label.., ..rr.label.., sep = "*`,`~"),
                  x = readc, y = linear, color = col), parse = TRUE) +
-    scale_colour_gradient(low="saddlebrown", high="red", limits=c(7,13), name="log2(BSJ_reads_number)") 
+    scale_colour_gradient(low="burlywood", high="red", limits=c(7,13), name="log2(BSJ_reads_number)") +
+    scale_x_continuous(limits=c(2, 13), breaks=seq(0,13,2)) +
+    scale_y_continuous(limits=c(2, 13), breaks=seq(0,13,2))
     }
 
 ggp_1 = ggp(dataframe = df_ssc_1, "ssc_testis_1 (31)")
@@ -197,3 +202,32 @@ ggp_3 = ggp(dataframe = df_ssc_3, "ssc_testis_3 (54)")
 
 suppressWarnings(suppressMessages(grid.arrange(ggp_1, ggp_2, ggp_3, ncol = 2, nrow = 2)))
 ```
+
+# Biotype per gene:
+
+```{r, fig.width=15, fig.height=15}
+df_gene_biotype = read.table("gene_biotype.tsv", sep="\t", header=TRUE)
+df_gene_biotype <- df_gene_biotype %>% group_by(Species, Biotype) %>% mutate(count = n())
+df_gene_biotype.all <- rbind(as.data.frame(df_gene_biotype), cbind(expand.grid(GeneID=levels(as.data.frame(df_gene_biotype)$GeneID),Species=levels(as.data.frame(df_gene_biotype)$Species), Biotype=levels(as.data.frame(df_gene_biotype)$Biotype)), count=NA))
+```
+
+```{r}
+p <- ggplot(data=df_gene_biotype.all, aes(x=Species, y=log(count), fill=Biotype)) +
+geom_bar(stat="identity", position="dodge") +
+  facet_grid(~Species, scales = "free_x", space = "free_x")
+p
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
