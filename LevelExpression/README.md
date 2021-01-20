@@ -32,3 +32,9 @@ Régression linéaire : comparaison de l'expression du totalRNAseq et du mRNAseq
 - Ordonnée : niveau d'espression en total RNAseq
 - Points gris : gènes non concernés par la production de circRNAs
 - Points marrons : gènes concernés par la production de circRNAs. Le dégradé de marron correspond au junction-ratio.
+
+**Proportion des biotypes par espèce**
+
+![genebiotype](https://github.com/ccerutti88/circRNA/blob/master/LevelExpression/gene_biotype.png)
+
+
