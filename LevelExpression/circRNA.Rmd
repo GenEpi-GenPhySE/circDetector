@@ -178,7 +178,7 @@ ggp <- function(dataframe, title) {
                 aes(x = readc, y = linear, color = col), colour="cadetblue2", size=psize) +
     geom_smooth(method=lm, se=FALSE, data = subset(dataframe, col == "- circRNA"),
                                       aes(x = readc, y = linear, color = col), colour = "cadetblue2") +
-    stat_poly_eq(data = subset(dataframe, col == '- circRNA'), colour="cadetblue3",
+    stat_poly_eq(data = subset(dataframe, col == '- circRNA'), colour="cyan4",
                  formula = "y~x", label.x = "left", label.y = 1,
                  aes(label = paste(..eq.label.., ..rr.label.., sep = "*`,`~"),
                  x = readc, y = linear, color = col), parse = TRUE)+
@@ -187,11 +187,11 @@ ggp <- function(dataframe, title) {
                                      colour="burlywood")+
     geom_point(data = subset(dataframe, col == "+ circRNA"),
                aes(x = readc, y = linear, color = as.numeric(fr)), size=psize)+ 
-    stat_poly_eq(data = subset(dataframe, col == '+ circRNA'), colour="sandybrown",
+    stat_poly_eq(data = subset(dataframe, col == '+ circRNA'), colour="sienna",
                  formula = "y~x",
                  aes(label = paste(..eq.label.., ..rr.label.., sep = "*`,`~"),
                  x = readc, y = linear, color = col), parse = TRUE) +
-    scale_colour_gradient(low="burlywood", high="red", limits=c(7,13), name="log2(BSJ_reads_number)") +
+    scale_colour_gradient(low="burlywood", high="red", limits=c(7,13), name="log2(BSJ_number)") +
     scale_x_continuous(limits=c(2, 13), breaks=seq(0,13,2)) +
     scale_y_continuous(limits=c(2, 13), breaks=seq(0,13,2))
     }
