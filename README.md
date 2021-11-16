@@ -4,7 +4,7 @@ circDetector (CD) : circular RNAs detection and annotation
 ## Description:
 *circDetector* (CD) is a computational tool for detecting and annotation of circular RNAs (circRNAs) from Total RNA-Seq data. This tool is implemented with the Snakemake workflow management system allowing reproducible and scalable data analyses. 
 CD was developped to identify circRNAs from reads mapped to the reference genome with the STAR tool (Spliced Transcripts Alignment to a Reference). It consists of identifying reads with a circular junction (*chimeric reads*) from the *chimeric.out.junction* files provided by STAR. 
-CD also provides a file reporting all statistics of STAR-SE mapping. Mapping informations were extracted from the file *Log.final.out*.
+CD also provides a file reporting all statistics of STAR-SE mapping. Mapping informations were extracted from the STAR file *Log.final.out*.
 
 # Table of contents:
 1. [Installation](#installation)
