@@ -46,7 +46,6 @@ python scripts/prepare.py -i metadata.tsv -o samples.tsv
 ```
 
 * **Input:** *metadata.tsv* is a tabulated file containing the following fields:
-The table must contain the following informations (column names): species, tissue, animal_name and mapdir (bold in the table below).
 
 |Column|Type  |Description                                                |
 |:-----:|:----:|:----------------------------------------------------------:|
@@ -64,6 +63,8 @@ The table must contain the following informations (column names): species, tissu
 |12    |string|platform (Illumina Hiseq 4000)                             |
 |13    |string|technology   						                      |
 |**14**    |string|mapdir (file path to mapping files)	                      |
+
+**Note:** The table must contain the following informations (column names): species, tissue, animal_name and mapdir (bold in the table above).
 
 * **Output:** *samples.tsv* is a tabulated file containing the following fields:
 
