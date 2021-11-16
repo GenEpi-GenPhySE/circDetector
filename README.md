@@ -46,6 +46,7 @@ python scripts/prepare.py -i metadata.tsv -o samples.tsv
 ```
 
 * **Input:** *metadata.tsv* is a tabulated file containing the following fields:
+
 |Column|Type  |Description                                                |
 |:-----:|:----:|:----------------------------------------------------------:|
 |1     |string|species (bos_taurus, sus_scrofa)                           |
@@ -64,6 +65,7 @@ python scripts/prepare.py -i metadata.tsv -o samples.tsv
 |14    |string|mapdir (file path to mapping files)	                      |
 
 * **Output:** *samples.tsv* is a tabulated file containing the following fields:
+
 |Column|Type  |Description                                                |
 |:-----:|:----:|:---------------------------------------------:|
 |1     |string|sample (sample name)  |
