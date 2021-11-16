@@ -1,4 +1,4 @@
-circRNA_project : circular RNAs detection and annotation
+circRNA detection project (CD) : circular RNAs detection and annotation
 ===================
 
 ## Description:
