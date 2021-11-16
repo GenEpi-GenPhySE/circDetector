@@ -181,7 +181,7 @@ rule detection:
         " -min_cr {params.min_ccr} -tol 0 -fmt bed -o {output} 1>{log.stdout} 2>{log.stderr}"
 
 
-rule mergemappingstat:
+rule mappingstat:
     input:
         config["samples"]
     output:
