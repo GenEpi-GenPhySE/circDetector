@@ -113,10 +113,4 @@
          AND
      The described gene is described as 'lnc', 'c', or 'pseudo'
 
-
 The classes *asEXO* and *seEXO* were not implemented in the annotation module of CD.
-
-
-
-
-
