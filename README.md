@@ -53,18 +53,18 @@ python scripts/prepare.py -i metadata.tsv -o samples.tsv
 |2     |string|species_short (bos_taurus = cow, sus_scrofa = pig) 		  |
 |3     |string|breed (cow\: Angus, Charolais ; pig\: Yana,Pietrain)         |
 |**4**     |string|tissue (testis, liver)  		                              |
-|5     |string|sex (male, female)				                          |
+|**5**     |string|sex (male, female)				                          |
 |6     |string|age (days, month, years)  					              |
 |**7**     |string|animal_name (specific name for each individual)            |
-|8     |string|sample_deprecated     				                      |
-|9     |string|sample_unit (sample uniq name)                             |
+|**8**     |string|sample     				                      |
+|**9**     |string|sample_unit (sample uniq name)                             |
 |10    |string|fastq (fastq file name)                                    |
 |11    |string|SRA (Sequence Read Archive)                                |
 |12    |string|platform (Illumina Hiseq 4000)                             |
 |13    |string|technology   						                      |
 |**14**    |string|mapdir (file path to mapping files)	                      |
 
-**Note:** The table must contain the following informations (column names): species, tissue, animal_name and mapdir (bold in the table above).
+**Note:** The table must contain the following informations (column names): species, tissue, sex, animal_name, sample, sample_unit and mapdir (bold in the table above).
 
 * **Output:** *samples.tsv* is a tabulated file containing the following fields:
 
