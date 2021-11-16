@@ -82,8 +82,6 @@ The Snakefile is composed of the main following rules:
 - rule mappingstat : analyses of statistics of STAR-SE mapping
 - rule annotation : circRNAs annotation
 
-![alt text](https://github.com/ccerutti88/circRNA/blob/master/workflow_CD.png?raw=true)
-
 ![alt text](https://github.com/ccerutti88/circRNA/blob/master/workflow_CD.png =100x20)
 
 ### Rule detection: circRNAs detection:
