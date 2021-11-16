@@ -1,8 +1,10 @@
-circRNA detection project (CD) : circular RNAs detection and annotation
+circDetector (CD) : circular RNAs detection and annotation
 ===================
 
 ## Description:
-*circRNA_project* is a computational tool for detecting and annotation of circular RNAs (circRNAs) from Total RNA-Seq data. This tool is implemented with the Snakemake workflow management system allowing reproducible and scalable data analyses. 
+*circDetector* (CD) is a computational tool for detecting and annotation of circular RNAs (circRNAs) from Total RNA-Seq data. This tool is implemented with the Snakemake workflow management system allowing reproducible and scalable data analyses. 
+CD was developped to identify circRNAs from reads mapped to the reference genome with the STAR tool (Spliced Transcripts Alignment to a Reference). It consists of identifying reads with a circular junction (*chimeric reads*) from the *chimeric.out.junction* files provided by STAR. 
+CD also provides a file reporting all statistics of STAR-SE mapping. Mapping informations were extracted from the file *Log.final.out*.
 
 # Table of contents:
 1. [Installation](#installation)
@@ -39,6 +41,7 @@ pip install networkx
 The Snakefile is composed of following rules:
 - rule mergechimeric : merge *Chimeric.out.junction* files (R1 and R2)
 - rule detection : circRNAs detection
+- rule mappingstat : analyses of statistics of STAR-SE mapping 
 - rule annotation : circRNAs annotation
 
 #### Rule mergechimeric: Preparing the sample file:
@@ -105,7 +108,7 @@ python3 scripts/circRNA_detection.py -r1 -r2 -o circ_rnas.bed
   -fmt {bed,gtf}, --annot_format {bed,gtf}
                         Annotation file format
   -annot ANNOTATION_FILE, --annotation_file ANNOTATION_FILE
-                        Annotataion file path
+                        Annotation file path
   -oe EXONIC_OUTPUT_FILE, --exonic_output_file EXONIC_OUTPUT_FILE
                         Exonic output file path
   -oi INTRONIC_OUTPUT_FILE, --intronic_output_file INTRONIC_OUTPUT_FILE
