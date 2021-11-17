@@ -102,7 +102,7 @@ class Annotation():
             self.attributes_d = attributes
             self.attribues = "; ".join(["%s = %s " %(key, value) for key, value in attributes.items()])
         else:
-            self.attributes += "; name=%s" % self.name
+            self.attributes += "; name=%s" % str(self.name)
             self.attributes_d = dict(re.split(" |=", item) for item in self.attributes.split("; "))
             self.clean_quotes()
 
@@ -179,7 +179,7 @@ class Annotation():
             d[key] = d[key].replace('\"', '')
 
     def get_annotation_tag(self, end_type):
-        return "_".join([self.get_att("exon_id"), end_type, self.biotype])
+        return "_".join([self.get_att("exon_id"), end_type, self.biotype, self.strand])
 
     def annot_str(self, fmt="gtf", attributes=["name"]):
         if fmt=="gtf":

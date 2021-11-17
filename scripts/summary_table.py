@@ -10,12 +10,6 @@ def eprint(*args, **kwargs):
     print(*args,  file=sys.stderr, **kwargs)
 
 
-def get_sample(file):
-    """ Get the sample name from the file path"""
-    sample_name = os.path.split(os.path.dirname(file))[1]
-    return sample_name
-
-
 def read_file(file):
     """ Read the circRNAs annotation file and return a pandas dataframe"""
     df = pd.read_table(file, sep='\t')
@@ -34,7 +28,7 @@ def write_summary_meg_table(df, output_file_name, min_size):
         tsv_writer.writerow(header)
         if len(df) > 0:
             for key, item in df:
-                exon_start = get_item(item.exons_start_end_ife).split("_")[0]  
+                exon_start = get_item(item.exons_start_end_ife).split("_")[0]
                 exon_end = get_item(item.exons_start_end_ife).split("_")[1]
                 if int(exon_end) - int(exon_start) > min_size:
                     strand = list(item.strand)
@@ -51,7 +45,7 @@ def write_summary_meg_table(df, output_file_name, min_size):
                     nb_ccr = sum(item.nb_ccr)
                     exon_name = get_item(item.exon_id_ife)
                     # print(df.get_group(key), "\n\n")
-                    row = [gene_id, biotype, nb_circ_sens, nb_circ_antisens, nb_ccr, exon_name, exon_start, exon_end]            
+                    row = [gene_id, biotype, nb_circ_sens, nb_circ_antisens, nb_ccr, exon_name, exon_start, exon_end]
                     tsv_writer.writerow(row)
 
 
@@ -86,8 +80,8 @@ def write_summary_pleg_table(df, output_file_name, min_size):
         tsv_writer.writerow(header)
         if len(df) > 0:
             for key, item in df:
-                exon_start = get_item(item.exons_start_end_ife).split("_")[0]  
-                exon_end = get_item(item.exons_start_end_ife).split("_")[1] 
+                exon_start = get_item(item.exons_start_end_ife).split("_")[0]
+                exon_end = get_item(item.exons_start_end_ife).split("_")[1]
                 if int(exon_end) - int(exon_start) > min_size:
                     # Get gene_id and biotype:
                     gene_id_ife = get_item(item.gene_id_ife).split(",")
@@ -100,62 +94,77 @@ def write_summary_pleg_table(df, output_file_name, min_size):
                         gene_id = ''.join(gene_id_ife).split("_")[0]
                         strand_gene_ife = ''.join(gene_id_ife).split("_")[1]
                         biotype = ''.join(gene_id_ife).split("_")[2]
-                    strand = list(item.strand)      
+                    strand = list(item.strand)
                     nb_circ_rna = len(df.get_group(key))
                     nb_circ_sens = strand.count(strand_gene_ife)
                     nb_circ_antisens = nb_circ_rna - nb_circ_sens
                     nb_ccr = sum(item.nb_ccr)
                     exon_name = key
-                    row = [gene_id, nb_gene, biotype, nb_circ_sens, nb_circ_antisens, nb_ccr, exon_name, exon_start, exon_end]            
+                    row = [gene_id, nb_gene, biotype, nb_circ_sens, nb_circ_antisens, nb_ccr, exon_name, exon_start, exon_end]
                     tsv_writer.writerow(row)
-        
+
+def check_file(file):
+    with open(file, 'r') as f:
+        if len(f.read()) <= 1:
+            result="Empty"
+        else:
+            result="Not empty"
+    return result
+
 
 def main():
-    
-    # Get sample name:
-    sample = get_sample(args.input_meg_file)
+
+    # Get min_size:
     min_size = int(args.min_size)
 
     # Read input annotation circRNAs files:
-    df_meg = read_file(args.input_meg_file)
-    df_pleg = read_file(args.input_pleg_file)
-    df_intronic = read_file(args.input_intronic_file)
+    if check_file(args.input_meg_file) == "Not empty":
+        df_meg = read_file(args.input_meg_file)
+        # Meg circRNAs:
+        ## Group by gene:
+        df_meg = df_meg.groupby('gene_id_ife')
+        write_summary_meg_table(df_meg, args.output_meg_file, min_size)
+    else:
+        open(args.output_meg_file, 'a').close()
 
-    # Meg circRNAs:
-    ## Group by gene:
-    df_meg = df_meg.groupby('gene_id_ife')
-    write_summary_meg_table(df_meg, args.output_meg_file, min_size)
+    if check_file(args.input_intronic_file) == "Not empty":
+        df_intronic = read_file(args.input_intronic_file)
+        # Intronic circRNAs:
+        ## Group by intron name:
+        df_intronic = df_intronic.groupby('intron_name')
+        write_summary_intronic_table(df_intronic, args.output_intronic_file, min_size)
+    else:
+        open(args.output_intronic_file, 'a').close()
 
-    # Intronic circRNAs:
-    ## Group by intron name:
-    df_intronic = df_intronic.groupby('intron_name')
-    write_summary_intronic_table(df_intronic, args.output_intronic_file, min_size)
+    if check_file(args.input_pleg_file) == "Not empty":
+        df_pleg = read_file(args.input_pleg_file)
+        # Pleg circRNAs:
+        ## Group by exon:
+        df_pleg = df_pleg.groupby('exon_id_ife')
+        write_summary_pleg_table(df_pleg, args.output_pleg_file, min_size)
+    else:
+        open(args.output_pleg_file, 'a').close()
 
-    # Pleg circRNAs:
-    ## Group by exon:
-    df_pleg = df_pleg.groupby('exon_id_ife')
-    write_summary_pleg_table(df_pleg, args.output_pleg_file, min_size)
 
-    
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Return summary circRNAs tables')
-    parser.add_argument('-ip', '--input_pleg_file', required=True, 
+    parser.add_argument('-ip', '--input_pleg_file', required=True,
                         help='Annotation pleg circRNAs file')
-    parser.add_argument('-im', '--input_meg_file', required=True, 
+    parser.add_argument('-im', '--input_meg_file', required=True,
                         help='Annotation meg circRNAs file')
-    parser.add_argument('-ii', '--input_intronic_file', required=True, 
+    parser.add_argument('-ii', '--input_intronic_file', required=True,
                         help='Annotation intronic circRNAs file')
-    parser.add_argument('-op', '--output_pleg_file', required=False, 
-                        default="pleg_summary.tsv", 
-                        help='Table containing summary of pleg circRNAs annotation')     
-    parser.add_argument('-om', '--output_meg_file', required=False, 
-                        default="meg_summary.tsv", 
-                        help='Table containing summary of meg circRNAs annotation')  
-    parser.add_argument('-oi', '--output_intronic_file', required=False, 
-                        default="intronic_summary.tsv", 
+    parser.add_argument('-op', '--output_pleg_file', required=False,
+                        default="pleg_summary.tsv",
+                        help='Table containing summary of pleg circRNAs annotation')
+    parser.add_argument('-om', '--output_meg_file', required=False,
+                        default="meg_summary.tsv",
+                        help='Table containing summary of meg circRNAs annotation')
+    parser.add_argument('-oi', '--output_intronic_file', required=False,
+                        default="intronic_summary.tsv",
                         help='Table containing summary of intronic circRNAs annotation')
-    parser.add_argument('-ms', '--min_size', required=False, default=55, 
-                        help='Minimum size of circRNAs')  
+    parser.add_argument('-ms', '--min_size', required=False, default=55,
+                        help='Minimum size of circRNAs')
     args = parser.parse_args()
     return args
 

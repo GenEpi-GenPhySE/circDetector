@@ -36,24 +36,35 @@ def create_folders(folders):
             os.makedirs(folder)
 
 
+def filter_samples(df):
+    df = df.drop(df[(df["sample"].isin(["ssc_liver_3", "ssc_liver_4", 
+                                        "ssc_muscle_1", "ssc_testis_1"]))].index)
+    df = df.reset_index(drop=True)
+    return df
+
+
 def main():
 
     # Read samples.tsv file:
     df_samples = pd.read_csv(args.sample_file, sep='\t')
-
-    samples_folders = df_samples["sample"].tolist()
-    df_samples = df_samples.loc[df_samples['sample'].isin(samples_folders)] 
+    
+    # Remove ssc_liver_3/4, ssc_muscle_1 and ssc_testis_1 samples:
+    df_filtered = filter_samples(df_samples)
+    
+    samples_folders = df_filtered["sample"].tolist()
+    df_filtered = df_filtered.loc[df_filtered['sample'].isin(samples_folders)] 
     
     # Get the folder list to create:
-    folders = get_folder_to_create(df_samples)
+    folders = get_folder_to_create(df_filtered)
 
     # Create folders:
     create_folders(folders)
    
     # Group folders by species and tissue:
-    df_grouped = df_samples.groupby(["species", "tissue"])
+    df_grouped = df_filtered.groupby(["species", "tissue"])
     
     for key,item in df_grouped:
+
         group = df_grouped.get_group(key) 
         # Create col with path of folder:
         group["path_file_bed"] = group["sample"]+"/auzeville.bed"
