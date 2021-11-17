@@ -26,12 +26,12 @@ cd circRNA
 ```
 
 ### Required tools:
-To install locally:
+Local installation:
 ```bash
 sudo apt-get install bedtools
 ```
 
-To install on the Genotoul cluster:
+Installation on the Genotoul cluster:
 ```bash
 module load bioinfo/bedtools2-2.29.0
 ```
