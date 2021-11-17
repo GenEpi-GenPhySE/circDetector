@@ -25,9 +25,20 @@ git clone https://github.com/GenEpi-GenPhySE/circRNA.git
 cd circRNA
 ```
 
+### Required tools:
+To install locally:
+```bash
+sudo apt-get install bedtools
+```
+
+To install on the Genotoul cluster:
+```bash
+module load bioinfo/bedtools2-2.29.0
+```
+
 ### Setting the environment:
 ```bash
-/tools/python/3.6.3/bin/python3 -m venv circrnaenv
+python3 -m venv circrnaenv
 source circrnaenv/bin/activate
 pip install Cython
 pip install pybedtools
@@ -37,6 +48,10 @@ pip install natsort
 pip install tqdm
 pip install networkx
 ```
+
+### Preparing the config file:
+Snakemake provides a config file mechanism in which the path of the several files (for example annotation file, sample file, data...) can be specified.
+**Note:** The paths indicated in this file must be adapted to the data.
 
 ### Preparing the sample file:
 The script *prepare.py* takes as input an tabulated file containing the paths to all the mapping files and generates a simplified tabular file which will be taken at the entrance of the snakemake workflow.
@@ -181,20 +196,23 @@ Example of a command executed by Snakemake:
 python3 scripts/circRNA_annotation.py -circ circ_rnas.bed -annot -o annotation_circRNAs.tsv
 ```
 
-## Commands Options:
-
-### Example Commands:
-Testing the detection rule of the snakemake pipeline for a single sample:
-
+## Example Commands:
+Launching the pipeline locally:
 ```bash
-srun snakemake pig-testis-31/circ_rnas.bed -p --cores 1 &> snake.log
+snakemake -p --jobs 8
 ```
 
-**Note:** Make sure the circrnaenv environment is in this folder.
-
+Launching the pipeline on the Genotoul cluster:
 ```bash
 sbatch circ_rnas.sh
 ```
+
+Testing the detection rule locally for a single sample:
+```bash
+snakemake pig_testis_neonat-1/auzeville.bed -p --cores 1
+```
+
+**Note:** Make sure the circrnaenv environment is in this folder.
 
 ## Contact & Support
 For any bug report, feature request, or questions please fill out an issue through circRNA_project's [issue page](https://github.com/ccerutti88/circRNA/issues).
