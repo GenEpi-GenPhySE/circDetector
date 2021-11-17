@@ -1,6 +1,6 @@
-mappingrootdir: "/home/ccerutti/work/circRNA/test/testdata/mapdir/"
-samples: "/home/ccerutti/work/circRNA/test/samples.tsv"
+mappingrootdir: "/home/ccrutti/Bureau/circRNA/testdata/mapdir/"
+samples: "/home/ccrutti/Bureau/circRNA/samples.tsv"
 annotations:
-  pig: "/home/ccerutti/work/circRNA/test/testdata/annotation.bed"
+  pig: "/home/ccrutti/Bureau/circRNA/testdata/annotation.bed"
 wdir: "results"
 report: "report"

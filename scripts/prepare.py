@@ -48,7 +48,7 @@ def write_sample_file(metadata, output_file):
     species_names = []
     for index, row in metadata.iterrows():
         short_name = get_species_short(row['species'])
-        sample = "-".join([short_name, row['tissue'],
+        sample = "_".join([short_name, row['tissue'],
                            row['animal_name']])
         species = short_name
         sample_ids.append(sample)
