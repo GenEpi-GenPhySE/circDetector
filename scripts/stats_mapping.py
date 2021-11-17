@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#usage: python3 scripts/stats_mapping.py -i sample_test.tsv -o test_out.tsv
+#usage: python3 scripts/stats_mapping.py -i samples.tsv -o mapping_stats_samples.tsv
 
 # imports:
 import os
@@ -96,15 +96,15 @@ def main():
     paths_out = read_log_file(sample)
 
     # Write the statistic table with all samples:
-    write_final_stat_tab(paths_out, "reports/"+args.output_file)
+    write_final_stat_tab(paths_out, args.output_file)
 
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Sample file')
     parser.add_argument('-i', '--input_file',
                         required=True, help='Sample file')
-    parser.add_argument('-o', '--output_file',
-                        required=True, help='Sample file')
+    parser.add_argument('-o', '--output_file', required=False, 
+                        default="mapping_stat.tsv", help='Sample file')
     args = parser.parse_args()
     return args
 

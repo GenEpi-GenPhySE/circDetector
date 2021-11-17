@@ -1,4 +1,6 @@
-samples: samples.tsv
-annotation:
-  pig: ../testdata/annotation.bed
-wdir: results
+mappingrootdir: "/home/ccerutti/work/circRNA/test/testdata/mapdir/"
+samples: "/home/ccerutti/work/circRNA/test/samples.tsv"
+annotations:
+  pig: "/home/ccerutti/work/circRNA/test/testdata/annotation.bed"
+wdir: "results"
+report: "report"

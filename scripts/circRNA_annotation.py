@@ -216,7 +216,6 @@ def main():
     eprint("\nIdentification of EXONIC circRNAs:\n")
     eprint("\nReading circRNA file...\n")
     circ_rnas = circ.read_annotation(args.circ_rna_file, fmt=args.annot_format)
-
     eprint("\nReading annotation file...\n")
     annots = circ.read_annotation(args.annotation_file, fmt=args.annot_format)
 

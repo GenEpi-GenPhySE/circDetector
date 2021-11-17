@@ -22,6 +22,9 @@ def get_samples(sample_file):
 def get_annotation(wildcards):
     species = wildcards.sample.split("_")[0]
     if species not in config['annotations']:
+        print(wildcards.sample)
+        print(species)
+        print(config['annotations'])
         print("Warning the species %s is absent from aconfig file" % species)
         exit(1)
     return config['annotations'][species]
@@ -36,7 +39,8 @@ def get_star_outdir(sample, samples):
 
 
 def get_se_chimeric_junctions(wildcards):
-    starse_outdir = get_star_outdir(wildcards.sample, samples)
+    #starse_outdir = get_star_outdir(wildcards.sample, samples)
+    starse_outdir = config["mappingrootdir"]
     R1 = os.path.join(starse_outdir, "se", "R1", "Chimeric.out.junction")
     R2 = os.path.join(starse_outdir, "se", "R2", "Chimeric.out.junction")
     return {"R1": R1, "R2": R2}
@@ -64,7 +68,6 @@ wildcard_constraints:
 
 rule all:
     input:
-        # expand("{sample}/circ_rnas.bed", sample=samples.index),
         expand("{sample}/auzeville.bed", sample=samples.index),
         expand("{sample}/annotation_circRNAs.out", sample=samples.index),
         expand("{sample}/stats_annotation.tsv", sample=samples.index),
@@ -77,10 +80,12 @@ rule all:
         expand("{sample}/{sample}_intronic_summary.tsv", sample=samples.index),
         expand("{sample}/{sample}_pleg_summary.tsv", sample=samples.index),
         "stats_annotation_all.tsv",
-        "exonic_comparison_all.tsv",
-        "logs/merged_bed.log"
-        # "mapping_stat.tsv"
-      
+        #"exonic_comparison_all.tsv",
+        #"logs/merged_bed.log",
+        "mapping_stat.tsv"
+    shell:
+        "find {input} -type f -empty -delete"
+
 
 rule mergeexoniccomparison:
     input:
@@ -88,7 +93,7 @@ rule mergeexoniccomparison:
     output:
         "exonic_comparison_all.tsv"
     shell:
-        "cat {{bta,oar,ssc}}_*/*_exonic_summary.tsv | cut -f1,3,4 |tail -n+2|sort|uniq > {output}" 
+        "cat {{bta,oar,ssc}}_*/*_exonic_summary.tsv | cut -f1,3,4 |tail -n+2|sort|uniq > {output}"
 
 
 rule summaryannotation:
@@ -104,8 +109,7 @@ rule summaryannotation:
         stdout = "logs/{sample}_summary_annotation.o",
         stderr = "logs/{sample}_summary_annotation.e"
     params:
-        min_size = 55 # K006
-        #min_size = 80 # neonat_2
+        min_size = 55
     shell:
         "python3 ../scripts/summary_table.py -ip {input.pleg} -im {input.meg} -ii {input.intronic}"
         " -op {output.pleg} -om {output.meg} -oi {output.intronic} -ms {params.min_size}"
@@ -139,11 +143,10 @@ rule statannotation:
         " -oi {output.intronic} -oe {output.exonic} -oce {output.comp_exonic} -osepleg {output.sub_exonic_pleg}"
         " -osemeg {output.sub_exonic_meg}"
         " 1>{log.stdout} 2>{log.stderr}"
-        
+
 
 rule annotation:
     input:
-        # circ_detected = "{sample}/circ_rnas.bed",
         circ_detected = "{sample}/auzeville.bed",
         annot_exon = get_annotation
     output:
@@ -159,17 +162,15 @@ rule annotation:
 rule cumul_bed:
     input:
         config["samples"]
-    log: 
+    log:
         "logs/merged_bed.log"
     shell:
         "python3 ../scripts/cumul_bed.py -sp {input} > {log}"
-
 
 rule detection:
     input:
         unpack(get_se_chimeric_junctions)
     output:
-        # "{sample}/circ_rnas.bed"
         "{sample}/auzeville.bed"
     log:
         stdout = "logs/{sample}_detection.o",
@@ -177,11 +178,12 @@ rule detection:
     params:
         min_ccr=5
     shell:
-        "python3 ../scripts/circRNA_detection.py -r1 {input.R1} -r2 {input.R2}"
+        "if grep -q 'Nreads' {input.R1}; then head -n -2 {input.R1} > {input.R1}2; mv {input.R1}2 {input.R1}; fi ;"
+        " if grep -q 'Nreads' {input.R2}; then head -n -2 {input.R2} > {input.R2}2; mv {input.R2}2 {input.R2}; fi ;"
+        " python3 ../scripts/circRNA_detection.py -r1 {input.R1} -r2 {input.R2}"
         " -min_cr {params.min_ccr} -tol 0 -fmt bed -o {output} 1>{log.stdout} 2>{log.stderr}"
 
-
-rule mappingstat:
+rule mergemappingstat:
     input:
         config["samples"]
     output:
