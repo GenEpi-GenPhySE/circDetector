@@ -168,8 +168,6 @@ Started job on |       Oct 26 05:21:11
 
 ### Rule annotation: circRNAs annotation:
 
-To annotate circRNAs, we need to clean short circRNAs manually. Post traitement « manuel » des données pour éliminer les circRNAs trop petits.
-
 ```bash
 -circ CIRC_RNA_FILE, --circ_rna_file CIRC_RNA_FILE
                         Circular RNA file path
@@ -190,6 +188,8 @@ Example of a command executed by Snakemake:
 ```bash
 python3 scripts/circRNA_annotation.py -circ circ_rnas.bed -annot -o annotation_circRNAs.tsv
 ```
+
+**Note:** Manual post-processing of data is required to remove short circRNAs.
 
 ## Example Commands:
 Launching the pipeline locally:
