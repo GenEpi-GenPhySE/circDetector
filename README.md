@@ -94,7 +94,7 @@ The Snakefile is composed of the main following rules:
 
 ![alt text](https://github.com/ccerutti88/circRNA/blob/master/workflow_CD.png?raw=true)
 
-### Rule detection: circRNAs detection:
+### Rule detection: 
 
 ```bash
   -r1 R1_INPUT_FILE, --r1_input_file R1_INPUT_FILE
@@ -117,7 +117,7 @@ Example of a command executed by Snakemake:
 python3 scripts/circRNA_detection.py -r1 -r2 -o circ_rnas.bed
 ```
 
-### Rule mappingstat: circRNAs detection:
+### Rule mappingstat: 
 
 CD provides a file reporting all statistics of STAR-SE mapping.
 Mapping informations were extracted from the STAR file *Log.final.out*.
@@ -166,7 +166,7 @@ Started job on |       Oct 26 05:21:11
 
 * **Output:** *reports/mapping_stat.tsv* is a tabulated file containing all the informations of the input file (column) for each sample (row).
 
-### Rule annotation: circRNAs annotation:
+### Rule annotation: 
 
 ```bash
 -circ CIRC_RNA_FILE, --circ_rna_file CIRC_RNA_FILE
