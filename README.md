@@ -65,7 +65,7 @@ python scripts/prepare.py -i metadata.tsv -o samples.tsv
 |Column|Type  |Description                                                |
 |:----:|:----:|:---------------------------------------------------------:|
 |1     |string|species                                                    |
-|2     |string|tissue (testis, liver)  		                                |
+|2     |string|tissue   		                                              |
 |3     |string|sex (male, female)				                                  |
 |4     |string|sample (single, orient)     				                        |
 |5     |string|sample_unit (sample uniq name)                             |
