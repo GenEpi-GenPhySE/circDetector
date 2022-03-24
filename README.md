@@ -22,7 +22,7 @@ To install this tool, you need to first fetch the repository [git repository](ht
 
 ```bash
 git clone https://github.com/GenEpi-GenPhySE/circRNA.git
-cd circRNA
+cd circDetector
 ```
 
 ### Required tools:
