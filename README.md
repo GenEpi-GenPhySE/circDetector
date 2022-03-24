@@ -63,11 +63,11 @@ python scripts/prepare.py -i metadata.tsv -o samples.tsv
 * **Input:** *metadata.tsv* is a tabulated file containing the following fields:
 
 |Column|Type  |Description                                                |
-|:-----:|:----:|:----------------------------------------------------------:|
-|1     |string|species (bos_taurus, sus_scrofa)                           |
-|2     |string|tissue (testis, liver)  		                              |
-|3     |string|sex (male, female)				                          |
-|4     |string|sample (single, orient)     				                      |
+|:----:|:----:|:---------------------------------------------------------:|
+|1     |string|species                                                    |
+|2     |string|tissue (testis, liver)  		                                |
+|3     |string|sex (male, female)				                                  |
+|4     |string|sample (single, orient)     				                        |
 |5     |string|sample_unit (sample uniq name)                             |
 |6     |string|animal_name (specific name for each individual)            |
 |7     |string|mapdir (file path to mapping files)	                      |
@@ -76,13 +76,13 @@ python scripts/prepare.py -i metadata.tsv -o samples.tsv
 
 * **Output:** *samples.tsv* is a tabulated file containing the following fields:
 
-|Column|Type  |Description                                     |
-|:-----:|:----:|:---------------------------------------------:|
+|Column|Type  |Description                                                |
+|:----:|:----:|:---------------------------------------------------------:|
 |1     |string|sample (concatenation of species, tissue and animal_name)  |
-|2     |string|sample_unit (sample uniq name)								   |
-|3     |string|species                                         | 
-|4     |string|sex (male, female)					   |
-|5     |string|mapdir (file path to mapping files)					   |
+|2     |string|sample_unit (sample uniq name)								              |
+|3     |string|species                                                    | 
+|4     |string|sex (male, female)					                                |
+|5     |string|mapdir (file path to mapping files)					              |
 
 
 ## Snakemake worflow:
