@@ -80,7 +80,7 @@ python scripts/prepare.py -i metadata.tsv -o samples.tsv
 |:-----:|:----:|:---------------------------------------------:|
 |1     |string|sample (concatenation of species, tissue and animal_name)  |
 |2     |string|sample_unit (sample uniq name)								   |
-|3     |string|species (bos_taurus = cow, sus_scrofa = pig)    |
+|3     |string|species                                         | 
 |4     |string|sex (male, female)					   |
 |5     |string|mapdir (file path to mapping files)					   |
 
