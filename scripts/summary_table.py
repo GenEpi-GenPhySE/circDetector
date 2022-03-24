@@ -58,6 +58,7 @@ def write_summary_intronic_table(df, output_file_name, min_size):
             for key, item in df:
                 start_i = ''.join([str(round(x)) for x in list(set(item.start_i))])
                 end_i = ''.join([str(round(x)) for x in list(set(item.end_i))])
+                chrom = ''.join([str(x) for x in list(set(item.chrom))])
                 if int(end_i) - int(start_i) > min_size:
                     intron_name = key
                     gene_id = get_item(item.gene_id_i).split("_")[0]
