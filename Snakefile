@@ -176,12 +176,13 @@ rule detection:
         stdout = "logs/{sample}_detection.o",
         stderr = "logs/{sample}_detection.e"
     params:
-        min_ccr = config["min_ccr"]
+        min_ccr = config["min_ccr"],
+        tolerance = config["tolerance"]
     shell:
         "if grep -q 'Nreads' {input.R1}; then head -n -2 {input.R1} > {input.R1}2; mv {input.R1}2 {input.R1}; fi ;"
         " if grep -q 'Nreads' {input.R2}; then head -n -2 {input.R2} > {input.R2}2; mv {input.R2}2 {input.R2}; fi ;"
         " python3 ../scripts/circRNA_detection.py -r1 {input.R1} -r2 {input.R2}"
-        " -min_cr {params.min_ccr} -tol 0 -fmt bed -o {output} 1>{log.stdout} 2>{log.stderr}"
+        " -min_cr {params.min_ccr} -tol {params.tolerance} -fmt bed -o {output} 1>{log.stdout} 2>{log.stderr}"
 
 rule mergemappingstat:
     input:
