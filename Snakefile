@@ -109,7 +109,7 @@ rule summaryannotation:
         stdout = "logs/{sample}_summary_annotation.o",
         stderr = "logs/{sample}_summary_annotation.e"
     params:
-        min_size = 55
+        min_size = config["min_size"]
     shell:
         "python3 ../scripts/summary_table.py -ip {input.pleg} -im {input.meg} -ii {input.intronic}"
         " -op {output.pleg} -om {output.meg} -oi {output.intronic} -ms {params.min_size}"
@@ -176,7 +176,7 @@ rule detection:
         stdout = "logs/{sample}_detection.o",
         stderr = "logs/{sample}_detection.e"
     params:
-        min_ccr=5
+        min_ccr = config["min_ccr"]
     shell:
         "if grep -q 'Nreads' {input.R1}; then head -n -2 {input.R1} > {input.R1}2; mv {input.R1}2 {input.R1}; fi ;"
         " if grep -q 'Nreads' {input.R2}; then head -n -2 {input.R2} > {input.R2}2; mv {input.R2}2 {input.R2}; fi ;"
