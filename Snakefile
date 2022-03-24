@@ -20,7 +20,7 @@ def get_samples(sample_file):
 
 
 def get_annotation(wildcards):
-    species = wildcards.sample.split("_")[0]
+    species = get_species(wildcards.sample, samples)
     if species not in config['annotations']:
         print(wildcards.sample)
         print(species)
@@ -31,16 +31,17 @@ def get_annotation(wildcards):
 
 
 def get_star_outdir(sample, samples):
-    starse_outdir = os.path.join(config["mappingrootdir"],
-                                 samples.loc[sample, "species"],
-                                 "mapping",
-                                 sample)
+    starse_outdir = samples.loc[sample, "mapdir"]
     return starse_outdir
 
 
+def get_species(sample, samples):
+    species = samples.loc[sample, "species"]
+    return species
+
+
 def get_se_chimeric_junctions(wildcards):
-    #starse_outdir = get_star_outdir(wildcards.sample, samples)
-    starse_outdir = config["mappingrootdir"]
+    starse_outdir = get_star_outdir(wildcards.sample, samples)
     R1 = os.path.join(starse_outdir, "se", "R1", "Chimeric.out.junction")
     R2 = os.path.join(starse_outdir, "se", "R2", "Chimeric.out.junction")
     return {"R1": R1, "R2": R2}
@@ -62,8 +63,7 @@ samples = get_samples(config['samples'])
 
 # Wildcard constraints
 wildcard_constraints:
-    sample = "|".join(samples.index),
-    reads = "R1|R2"
+    sample = "|".join(samples.index)
 
 
 rule all:
