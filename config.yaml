@@ -4,3 +4,5 @@ annotations:
   pig: "/home/ccrutti/Bureau/circRNA/testdata/annotation.bed"
 wdir: "results"
 report: "report"
+min_ccr: 5
+min_size: 55
