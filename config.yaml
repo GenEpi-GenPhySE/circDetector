@@ -1,6 +1,6 @@
 samples: "/home/ccrutti/Bureau/circRNA/samples.tsv"
 annotations:
-  pig: "/home/ccrutti/Bureau/circRNA/testdata/annotation.bed"
+  sus_scrofa: "/home/ccrutti/Bureau/circRNA/testdata/annotation.bed"
 wdir: "results"
 report: "report"
 min_ccr: 5
