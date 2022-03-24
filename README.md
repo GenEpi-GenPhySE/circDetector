@@ -130,7 +130,7 @@ Mapping informations were extracted from the STAR file *Log.final.out*.
 * **Input:** Example of a *Log.final.out* file:
 
 ```bash
-Started job on |       Oct 26 05:21:11
+                                Started job on |       Oct 26 05:21:11
                             Started mapping on |       Oct 26 05:29:19
                                    Finished on |       Oct 26 05:52:39
       Mapping speed, Million of reads per hour |       121.89
