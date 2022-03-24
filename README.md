@@ -117,6 +117,11 @@ Example of a command executed by Snakemake:
 python3 scripts/circRNA_detection.py -r1 -r2 -o circ_rnas.bed
 ```
 
+Command to launch the detection rule: 
+```bash
+snakemake -R --until detection
+```
+
 ### Rule mappingstat: 
 
 CD provides a file reporting all statistics of STAR-SE mapping.
@@ -166,6 +171,11 @@ Started job on |       Oct 26 05:21:11
 
 * **Output:** *reports/mapping_stat.tsv* is a tabulated file containing all the informations of the input file (column) for each sample (row).
 
+Command to launch the mappingstat rule: 
+```bash
+snakemake -R --until mappingstat
+```
+
 ### Rule annotation: 
 
 ```bash
@@ -187,6 +197,11 @@ Started job on |       Oct 26 05:21:11
 Example of a command executed by Snakemake:
 ```bash
 python3 scripts/circRNA_annotation.py -circ circ_rnas.bed -annot -o annotation_circRNAs.tsv
+```
+
+Command to launch the annotation rule: 
+```bash
+snakemake -R --until annotation
 ```
 
 **Note:** Manual post-processing of data is required to remove short circRNAs.
