@@ -31,7 +31,7 @@ Local installation:
 sudo apt-get install bedtools
 ```
 
-Installation on the Genotoul cluster:
+Loading the bedtools module on the Genotoul cluster:
 ```bash
 module load bioinfo/bedtools2-2.29.0
 ```
