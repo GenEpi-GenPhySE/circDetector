@@ -32,25 +32,14 @@ def get_path_files(df):
     return df
 
 
-def get_species_short(species):
-    animal_keys = ["bos_taurus", "sus_scrofa"]
-    animal_values = ["cow", "pig"]
-    succint_name = dict(zip(animal_keys, animal_values))
-    if species in succint_name:
-        return succint_name[species]
-    else:
-        return species
-
-
 def write_sample_file(metadata, output_file):
     """Read the metadate file and return a pandas object"""
     sample_ids = []
     species_names = []
     for index, row in metadata.iterrows():
-        short_name = get_species_short(row['species'])
-        sample = "_".join([short_name, row['tissue'],
+        sample = "_".join([row['species'], row['tissue'],
                            row['animal_name']])
-        species = short_name
+        species = row['species']
         sample_ids.append(sample)
         species_names.append(species)
     metadata['sample'] = sample_ids
