@@ -4,4 +4,5 @@ annotations:
 wdir: "results"
 report: "report"
 min_ccr: 5
+tolerance: 0
 min_size: 55
