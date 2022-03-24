@@ -6,8 +6,10 @@
 #SBATCH --mem=16G
 #SBATCH --cpus-per-task=8
 
+module load bioinfo/bedtools2-2.29.0
+
 # We make sure here that the circrna env is active
-source circrnaenv/bin/activate
+#source circrnaenv/bin/activate
 
 #snakemake -p --jobs 8 -n
 snakemake -p --jobs 8
