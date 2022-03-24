@@ -1,4 +1,3 @@
-mappingrootdir: "/home/ccrutti/Bureau/circRNA/testdata/mapdir/"
 samples: "/home/ccrutti/Bureau/circRNA/samples.tsv"
 annotations:
   pig: "/home/ccrutti/Bureau/circRNA/testdata/annotation.bed"
