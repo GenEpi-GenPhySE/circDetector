@@ -12,4 +12,4 @@ module load bioinfo/bedtools2-2.29.0
 #source circrnaenv/bin/activate
 
 #snakemake -p --jobs 8 -n
-snakemake -p --jobs 8
+snakemake -p --jobs 8 --latency-wait 1000 &> snake.log
