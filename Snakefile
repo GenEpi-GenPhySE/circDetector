@@ -68,9 +68,9 @@ wildcard_constraints:
 
 rule all:
     input:
-        expand("{sample}/auzeville.bed", sample=samples.index),
-        expand("{sample}/annotation_circRNAs.out", sample=samples.index),
-        expand("{sample}/stats_annotation.tsv", sample=samples.index),
+        expand("{sample}/{sample}_detection.bed", sample=samples.index),
+        expand("{sample}/{sample}_annotation.out", sample=samples.index),
+        expand("{sample}/{sample}_stats_annotation.tsv", sample=samples.index),
         expand("{sample}/{sample}_intronic_circRNAs.tsv", sample=samples.index),
         expand("{sample}/{sample}_exonic_circRNAs.tsv", sample=samples.index),
         expand("{sample}/{sample}_exonic_summary.tsv", sample=samples.index),
@@ -118,7 +118,7 @@ rule summaryannotation:
 
 rule mergestatannotation:
     input:
-        expand("{sample}/stats_annotation.tsv", sample=samples.index)
+        expand("{sample}/{sample}_stats_annotation.tsv", sample=samples.index)
     output:
         "stats_annotation_all.tsv"
     shell:
@@ -127,9 +127,9 @@ rule mergestatannotation:
 
 rule statannotation:
     input:
-        "{sample}/annotation_circRNAs.out"
+        "{sample}/{sample}_annotation.out"
     output:
-        stats = "{sample}/stats_annotation.tsv",
+        stats = "{sample}/{sample}_stats_annotation.tsv",
         intronic = "{sample}/{sample}_intronic_circRNAs.tsv",
         exonic = "{sample}/{sample}_exonic_circRNAs.tsv",
         comp_exonic = "{sample}/{sample}_exonic_summary.tsv",
@@ -147,10 +147,10 @@ rule statannotation:
 
 rule annotation:
     input:
-        circ_detected = "{sample}/auzeville.bed",
+        circ_detected = "{sample}/{sample}_detection.bed",
         annot_exon = get_annotation
     output:
-        "{sample}/annotation_circRNAs.out"
+        "{sample}/{sample}_annotation.out"
     log:
         stdout = "logs/{sample}_annotation.o",
         stderr = "logs/{sample}_annotation.e"
@@ -171,7 +171,7 @@ rule detection:
     input:
         unpack(get_se_chimeric_junctions)
     output:
-        "{sample}/auzeville.bed"
+        "{sample}/{sample}_detection.bed"
     log:
         stdout = "logs/{sample}_detection.o",
         stderr = "logs/{sample}_detection.e"
