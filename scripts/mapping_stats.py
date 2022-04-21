@@ -40,7 +40,7 @@ def get_mapping_stats(runs):
         sample_info = [('sample', row['sample']),
                         ('sample_unit',row['sample_unit'] )]
         for read in reads:
-            mapdir = os.path.join(row["mapdir"],"se", read)
+            mapdir = os.path.join(row["mapdir"], read)
             if not os.path.exists(mapdir):
                 raise Exception("WARNING mapdir %s is missing" % mapdir)
             log_file = os.path.join(mapdir, "Log.final.out")
