@@ -21,7 +21,7 @@ The source code can be downloaded from [GitHub](https://github.com/GenEpi-GenPhy
 To install this tool, you need to first fetch the repository [git repository](https://github.com/ccerutti88/circRNA) or download the corresponding compressed files.
 
 ```bash
-git clone https://github.com/GenEpi-GenPhySE/circRNA.git
+git clone https://github.com/GenEpi-GenPhySE/circDetector.git
 cd circDetector
 ```
 
