@@ -22,7 +22,7 @@ def get_item(item):
 
 
 def write_summary_meg_table(df, output_file_name, min_size):
-    header = ["gene_name", "biotype", "nb_circ_sens", "nb_circ_antisens", "nb_ccr", "exon_name", "start_exon", "end_exon"]
+    header = ["gene_name", "biotype", "nb_circ_sens", "nb_circ_antisens", "nb_ccr", "chr", "exon_name", "start_exon", "end_exon"]
     with open(output_file_name, 'w') as fout:
         tsv_writer = csv.writer(fout, delimiter='\t')
         tsv_writer.writerow(header)
@@ -30,6 +30,7 @@ def write_summary_meg_table(df, output_file_name, min_size):
             for key, item in df:
                 exon_start = get_item(item.exons_start_end_ife).split("_")[0]
                 exon_end = get_item(item.exons_start_end_ife).split("_")[1]
+                chrom = get_item(item.chrom)
                 if int(exon_end) - int(exon_start) > min_size:
                     strand = list(item.strand)
                     gene_id = list(key.split("_"))[0]
@@ -45,12 +46,12 @@ def write_summary_meg_table(df, output_file_name, min_size):
                     nb_ccr = sum(item.nb_ccr)
                     exon_name = get_item(item.exon_id_ife)
                     # print(df.get_group(key), "\n\n")
-                    row = [gene_id, biotype, nb_circ_sens, nb_circ_antisens, nb_ccr, exon_name, exon_start, exon_end]
+                    row = [gene_id, biotype, nb_circ_sens, nb_circ_antisens, nb_ccr, chrom, exon_name, exon_start, exon_end]
                     tsv_writer.writerow(row)
 
 
 def write_summary_intronic_table(df, output_file_name, min_size):
-    header = ["gene_name", "biotype", "intron_name", "nb_circ_rna", "nb_ccr", "start_intron", "end_intron"]
+    header = ["gene_name", "biotype", "intron_name", "nb_circ_rna", "nb_ccr", "chr", "start_intron", "end_intron"]
     with open(output_file_name, 'w') as fout:
         tsv_writer = csv.writer(fout, delimiter='\t')
         tsv_writer.writerow(header)
@@ -70,12 +71,12 @@ def write_summary_intronic_table(df, output_file_name, min_size):
                         biotype = ''.join(biotype).split("_")[4]
                     nb_ccr = sum(item.nb_ccr)
                     nb_circ_rna = len(df.get_group(key))
-                    row = [gene_id, biotype, intron_name, nb_circ_rna, nb_ccr, start_i, end_i]
+                    row = [gene_id, biotype, intron_name, nb_circ_rna, nb_ccr, chrom, start_i, end_i]
                     tsv_writer.writerow(row)
 
 
 def write_summary_pleg_table(df, output_file_name, min_size):
-    header = ["gene_name", "nb_gene", "biotype", "nb_circ_sens", "nb_circ_antisens", "nb_ccr", "exon_name", "start_exon", "end_exon"]
+    header = ["gene_name", "nb_gene", "biotype", "nb_circ_sens", "nb_circ_antisens", "nb_ccr", "chr", "exon_name", "start_exon", "end_exon"]
     with open(output_file_name, 'w') as fout:
         tsv_writer = csv.writer(fout, delimiter='\t')
         tsv_writer.writerow(header)
@@ -83,6 +84,7 @@ def write_summary_pleg_table(df, output_file_name, min_size):
             for key, item in df:
                 exon_start = get_item(item.exons_start_end_ife).split("_")[0]
                 exon_end = get_item(item.exons_start_end_ife).split("_")[1]
+                chrom = get_item(item.chrom)
                 if int(exon_end) - int(exon_start) > min_size:
                     # Get gene_id and biotype:
                     gene_id_ife = get_item(item.gene_id_ife).split(",")
@@ -101,7 +103,7 @@ def write_summary_pleg_table(df, output_file_name, min_size):
                     nb_circ_antisens = nb_circ_rna - nb_circ_sens
                     nb_ccr = sum(item.nb_ccr)
                     exon_name = key
-                    row = [gene_id, nb_gene, biotype, nb_circ_sens, nb_circ_antisens, nb_ccr, exon_name, exon_start, exon_end]
+                    row = [gene_id, nb_gene, biotype, nb_circ_sens, nb_circ_antisens, nb_ccr, chrom, exon_name, exon_start, exon_end]
                     tsv_writer.writerow(row)
 
 def check_file(file):
