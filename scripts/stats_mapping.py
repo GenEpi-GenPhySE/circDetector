@@ -42,7 +42,7 @@ def read_log_file(sample):
         sample_unit_name = row["sample_unit"]
         path = row["mapdir"]
         for read in reads:
-            path_file = path+"/se/"+read+"/Log.final.out"
+            path_file = path+"/"+read+"/Log.final.out"
             f = open(path_file, "r")
             for line in f:
                 l = line.split("|")
