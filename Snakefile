@@ -42,16 +42,16 @@ def get_species(sample, samples):
 
 def get_se_chimeric_junctions(wildcards):
     starse_outdir = get_star_outdir(wildcards.sample, samples)
-    R1 = os.path.join(starse_outdir, "se", "R1", "Chimeric.out.junction")
-    R2 = os.path.join(starse_outdir, "se", "R2", "Chimeric.out.junction")
+    R1 = os.path.join(starse_outdir, "R1", "Chimeric.out.junction")
+    R2 = os.path.join(starse_outdir, "R2", "Chimeric.out.junction")
     return {"R1": R1, "R2": R2}
 
 
 def get_log_file(wildcards):
     logfile_outdir = get_star_outdir(wildcards.sample, samples)
     sample = wildcards.sample
-    log_R1 = os.path.join(logfile_outdir, "se", "R1", "Log.final.out")
-    log_R2 = os.path.join(logfile_outdir, "se", "R2", "Log.final.out")
+    log_R1 = os.path.join(logfile_outdir, "R1", "Log.final.out")
+    log_R2 = os.path.join(logfile_outdir, "R2", "Log.final.out")
     return {"sample": sample, "log_R1": log_R1, "log_R2": log_R2}
 
 
