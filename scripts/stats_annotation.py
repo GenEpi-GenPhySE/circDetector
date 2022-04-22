@@ -26,7 +26,7 @@ def intersection(lst1, lst2):
     return list(set(lst1) & set(lst2))
 
 
-def get_exonic_circrnas(df):
+def get_exonic_circrnas(df, cr_threshold):
     """ Get statistics about exonic circRNAs from the annotation_circRNA.out file"""
     # Arrays, dicts:
     exonic_circ_names, monoexonic_circ_names, true_exonic, single_end_circ_names = [], [], [], []
@@ -45,9 +45,7 @@ def get_exonic_circrnas(df):
         exon_end_tmp = exon_end.split("_")
         exon_end = exon_end_tmp[0]
 
-        if row.nb_ccr >= 5:
-            # if ((len(row.exons_id_start) > 0 or len(row.exons_id_end) > 0)
-            #     and len(row.intron_name) == 0):
+        if row.nb_ccr >= cr_threshold:
             if len(row.exons_id_start) > 0 or len(row.exons_id_end) > 0:
                 if row.strand == "+":
                     if ("5" and "+") in row.exons_id_start:
@@ -96,7 +94,7 @@ def get_exonic_circrnas(df):
     return true_exonic, nb_start_end_exonic, nb_single_annotated_junction, single_end_circ_names, ccr_single_annot, monoexonic_circ_names, exonic_circ_names
 
 
-def get_intronic_circrnas(df, exonic_circrnas):
+def get_intronic_circrnas(df, exonic_circrnas, cr_threshold):
     # Arrays, dicts:
     intronic_circ_names, true_intronic = [], []
     ccr_true_intronic = dict()
@@ -105,7 +103,7 @@ def get_intronic_circrnas(df, exonic_circrnas):
 
     for index, row in df.iterrows():
         if row.circ_rna_name not in exonic_circrnas:
-            if row.nb_ccr >= 5:
+            if row.nb_ccr >= cr_threshold:
                 if len(row.intron_name) > 0:
                     if row.strand == "+":
                         if (row.end_i - row.end) in range(-5,60):
@@ -134,7 +132,7 @@ def get_intronic_circrnas(df, exonic_circrnas):
     return true_intronic, nb_true_intronic, ccr_true_intronic, intronic_circ_names
 
 
-def get_subexonic_circrnas(df, monoexonic_circ_names, intronic_circ_names):
+def get_subexonic_circrnas(df, monoexonic_circ_names, intronic_circ_names, cr_threshold):
     # Subexonic_meg : sens + antisens
     # Subexonic_pleg : sens
     # Arrays, dicts:
@@ -144,7 +142,7 @@ def get_subexonic_circrnas(df, monoexonic_circ_names, intronic_circ_names):
     nb_infraexonic, nb_infraexonic_tot, nb_infraexonic_sens, nb_infraexonic_antisens = 0, 0, 0, 0
 
     for index, row in df.iterrows():
-        if row.nb_ccr >= 5:
+        if row.nb_ccr >= cr_threshold:
             if ((len(row.gene_id_ife) > 0) and (row.circ_rna_name not in monoexonic_circ_names)):
                 if (("_5_c_+" not in row.exons_id_start) and ("_5_lnc_+" not in row.exons_id_start) and
                     ("_3_c_-" not in row.exons_id_start) and ("_3_lnc_-" not in row.exons_id_start) and
@@ -206,35 +204,35 @@ def get_subexonic_circrnas(df, monoexonic_circ_names, intronic_circ_names):
     return subexonic, infraexonic_circ_names, nb_infraexonic_sens, ccr_infraexonic, subexonic_antisens_names
 
 
-def get_circrnas(df):
+def get_circrnas(df, cr_threshold):
     """ Read the annotation_circRNA.out dataframe and return all statistics to tabular
         format about circRNAs"""
     # Get exonic circRNAs:
-    stats_exonic_circrnas = get_exonic_circrnas(df)
+    stats_exonic_circrnas = get_exonic_circrnas(df, cr_threshold)
     exonic = stats_exonic_circrnas[0]
     monoexonic_names = stats_exonic_circrnas[5]
     exonic_names = stats_exonic_circrnas[6]
     # Get intronic circRNAs:
-    stats_intronic_circrnas = get_intronic_circrnas(df, exonic_names)
+    stats_intronic_circrnas = get_intronic_circrnas(df, exonic_names, cr_threshold)
     intronic = stats_intronic_circrnas[0]
     intronic_names = stats_intronic_circrnas[3]
     # Get subexonic circRNAs:
-    stats_subexonic_circrnas = get_subexonic_circrnas(df, monoexonic_names, intronic_names)
+    stats_subexonic_circrnas = get_subexonic_circrnas(df, monoexonic_names, intronic_names, cr_threshold)
     subexonic = stats_subexonic_circrnas[0]
     subexonic_antisens = stats_subexonic_circrnas[4]
 
     return exonic, subexonic, intronic, subexonic_antisens
 
 
-def get_stats_circrnas(sample, df, output_file_name):
+def get_stats_circrnas(sample, df, output_file_name, cr_threshold):
     """ Read the annotation_circRNA.out dataframe and return all statistics to tabular
         format about circRNAs"""
     nb_circ_tot = len(df)
     # Get circRNAs:
-    exonic = get_circrnas(df)[0]
-    subexonic = get_circrnas(df)[1]
-    subexonic_antisens = get_circrnas(df)[3]
-    intronic = get_circrnas(df)[2]
+    exonic = get_circrnas(df, cr_threshold)[0]
+    subexonic = get_circrnas(df, cr_threshold)[1]
+    subexonic_antisens = get_circrnas(df, cr_threshold)[3]
+    intronic = get_circrnas(df, cr_threshold)[2]
 
     # Get exonic circRNAs stats:
     stats_exonic = write_comparison_exonic_table(sample, exonic, output_file_name)
@@ -263,18 +261,18 @@ def get_stats_circrnas(sample, df, output_file_name):
         nb_ccr_start_end_exonic = stats_exonic[3]
         nb_exonic = write_comparison_exonic_table(sample, exonic, args.output_comp_exonic_file)[4]
 
-    nb_start_end_exonic = get_exonic_circrnas(df)[1]
-    nb_single_annotated_junction = get_exonic_circrnas(df)[2]
-    monoexonic_circ_names =  get_exonic_circrnas(df)[5]
-    exonic_names = get_exonic_circrnas(df)[6]
-    intronic_circ_names = get_intronic_circrnas(df, exonic_names)[3]
-    infraexonic_circ_names = get_subexonic_circrnas(df, monoexonic_circ_names, intronic_circ_names)[1]
-    single_end_circ_names = get_exonic_circrnas(df)[3]
-    nb_infraexonic_sens = get_subexonic_circrnas(df, monoexonic_circ_names, intronic_circ_names)[2]
-    nb_true_intronic = get_intronic_circrnas(df, exonic_names)[1]
-    ccr_single_annot = get_exonic_circrnas(df)[4]
-    ccr_true_intronic = get_intronic_circrnas(df, exonic_names)[2]
-    ccr_infraexonic = get_subexonic_circrnas(df, monoexonic_circ_names, intronic_circ_names)[3]
+    nb_start_end_exonic = get_exonic_circrnas(df, cr_threshold)[1]
+    nb_single_annotated_junction = get_exonic_circrnas(df, cr_threshold)[2]
+    monoexonic_circ_names =  get_exonic_circrnas(df, cr_threshold)[5]
+    exonic_names = get_exonic_circrnas(df, cr_threshold)[6]
+    intronic_circ_names = get_intronic_circrnas(df, exonic_names, cr_threshold)[3]
+    infraexonic_circ_names = get_subexonic_circrnas(df, monoexonic_circ_names, intronic_circ_names, cr_threshold)[1]
+    single_end_circ_names = get_exonic_circrnas(df, cr_threshold)[3]
+    nb_infraexonic_sens = get_subexonic_circrnas(df, monoexonic_circ_names, intronic_circ_names, cr_threshold)[2]
+    nb_true_intronic = get_intronic_circrnas(df, exonic_names, cr_threshold)[1]
+    ccr_single_annot = get_exonic_circrnas(df, cr_threshold)[4]
+    ccr_true_intronic = get_intronic_circrnas(df, exonic_names, cr_threshold)[2]
+    ccr_infraexonic = get_subexonic_circrnas(df, monoexonic_circ_names, intronic_circ_names, cr_threshold)[3]
 
     nb_start_end_false_exonic = nb_start_end_exonic - nb_start_end_exonic_selected
     nb_tot_exonic = nb_start_end_exonic + nb_single_annotated_junction
@@ -587,7 +585,7 @@ def write_circrnas_tables(sample, df, exonic_circrnas, intronic_circrnas, subexo
         open(args.output_subexonic_meg_file, 'a').close()
         open(args.output_subexonic_pleg_file, 'a').close()
 
-def main():
+def main(cr_threshold):
     # Get sample name:
     sample = get_sample(args.input_file)
 
@@ -595,17 +593,17 @@ def main():
     df_circ_annot = read_file(args.input_file)
 
     # Get the list of exonic, subexonic and intronic circRNAs:
-    exonic_circrnas = get_circrnas(df_circ_annot)[0]
-    subexonic_circrnas = get_circrnas(df_circ_annot)[1]
-    intronic_circrnas = get_circrnas(df_circ_annot)[2]
-    subexonic_antisens = get_circrnas(df_circ_annot)[3]
+    exonic_circrnas = get_circrnas(df_circ_annot, cr_threshold)[0]
+    subexonic_circrnas = get_circrnas(df_circ_annot, cr_threshold)[1]
+    intronic_circrnas = get_circrnas(df_circ_annot, cr_threshold)[2]
+    subexonic_antisens = get_circrnas(df_circ_annot, cr_threshold)[3]
 
     # Write exonic, intronic and subexonic circRNAs tables:
     circrnas_tables = write_circrnas_tables(sample, df_circ_annot, exonic_circrnas,
                                             intronic_circrnas, subexonic_circrnas, subexonic_antisens)
 
     # Compute statistics about exonic, subexonic and intronic circRNAs:
-    stats = get_stats_circrnas(sample, df_circ_annot, args.output_comp_exonic_file)
+    stats = get_stats_circrnas(sample, df_circ_annot, args.output_comp_exonic_file, cr_threshold)
 
     # Write the circRNAs statistics table:
     write_stats_table(stats, args.output_stats_file)
@@ -618,6 +616,9 @@ def parse_arguments():
     parser.add_argument('-o_stats', '--output_stats_file', required=False,
                         default="stats_annotation.tsv",
                         help='Table containing statistics of annotation')
+    parser.add_argument('-min_cr', '--cr_threshold', type=int,
+                        required=False, default=5,
+                        help='Minimum number of chimeric reads')
     parser.add_argument('-oi', '--output_intronic_file', required=False,
                         default="intronic_circRNAs.tsv",
                         help='Table containing intronic circRNAs')
@@ -633,9 +634,15 @@ def parse_arguments():
     parser.add_argument('-osemeg', '--output_subexonic_meg_file', required=False,
                         default="subexonic_meg_circRNAs.tsv",
                         help='Table containing subexonic circRNAs')
+    parser.add_argument('--verbose', help='Print more info', action='store_true')
+
     args = parser.parse_args()
+ 
+    dsp_control = circ.DisplayControl.instance()
+    dsp_control.verbose = args.verbose     
+
     return args
 
 if __name__ == '__main__':
     args = parse_arguments()
-    main()
+    main(args.cr_threshold)
