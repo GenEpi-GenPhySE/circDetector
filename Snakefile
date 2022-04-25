@@ -138,8 +138,10 @@ rule statannotation:
     log:
         stdout = "logs/{sample}_stat_annotation.o",
         stderr = "logs/{sample}_stat_annotation.e"
+    params:
+        min_ccr = config["min_ccr"]
     shell:
-        "python3 ../scripts/stats_annotation.py -i {input} -o_stats {output.stats}"
+        "python3 ../scripts/stats_annotation.py -i {input} -o_stats {output.stats} -min_cr {params.min_ccr}"
         " -oi {output.intronic} -oe {output.exonic} -oce {output.comp_exonic} -osepleg {output.sub_exonic_pleg}"
         " -osemeg {output.sub_exonic_meg}"
         " 1>{log.stdout} 2>{log.stderr}"
