@@ -30,7 +30,7 @@ def write_summary_meg_table(df, output_file_name, min_size):
             for key, item in df:
                 exon_start = get_item(item.exons_start_end_ife).split("_")[0]
                 exon_end = get_item(item.exons_start_end_ife).split("_")[1]
-                chrom = get_item(str(item.chrom))
+                chrom = get_item(map(str, item.chrom))
                 if int(exon_end) - int(exon_start) > min_size:
                     strand = list(item.strand)
                     gene_id = list(key.split("_"))[0]
@@ -84,7 +84,7 @@ def write_summary_pleg_table(df, output_file_name, min_size):
             for key, item in df:
                 exon_start = get_item(item.exons_start_end_ife).split("_")[0]
                 exon_end = get_item(item.exons_start_end_ife).split("_")[1]
-                chrom = get_item(str(item.chrom))
+                chrom = get_item(map(str, item.chrom))
                 if int(exon_end) - int(exon_start) > min_size:
                     # Get gene_id and biotype:
                     gene_id_ife = get_item(item.gene_id_ife).split(",")
